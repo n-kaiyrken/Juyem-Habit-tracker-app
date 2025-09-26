@@ -1,0 +1,60 @@
+# Gradle
+.gradle/
+build/
+**/build/
+
+# Local configuration files
+/local.properties
+/*.iml
+/.idea/
+.idea/**
+
+# Java class files
+*.class
+
+# Android Studio
+captures/
+.externalNativeBuild/
+
+# Gradle wrapper
+gradle/wrapper/gradle-wrapper.jar
+
+# Kotlin
+*.kotlin_module
+
+# Kotlin/Java class files
+*.class
+
+# IntelliJ
+out/
+bin/
+gen/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Firebase / google-services
+**/google-services.json
+**/google-services-info.plist
+
+# Keystore
+**/*.jks
+**/*.keystore
+
+# Logs
+*.log
+
+# Generated APKs
+*.apk
+*.ap_
+*.aab
+
+# Kotlin/JS, node, etc. (if used)
+node_modules/
+
+# Env files
+.env
+.env.local
+.env.*.local
+
