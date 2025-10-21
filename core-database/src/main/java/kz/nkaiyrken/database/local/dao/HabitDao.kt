@@ -1,0 +1,44 @@
+package kz.nkaiyrken.database.local.dao
+
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
+import kz.nkaiyrken.database.local.entity.HabitEntity
+import kz.nkaiyrken.database.local.model.HabitWithDetails
+
+@Dao
+interface HabitDao {
+    @Query("SELECT * FROM habits WHERE status = 'active' ORDER BY order_index ASC")
+    fun getActiveHabits(): Flow<List<HabitEntity>>
+
+    @Query("SELECT * FROM habits WHERE habit_id = :habitId")
+    fun getHabitById(habitId: Int): Flow<HabitEntity?>
+
+    @Transaction
+    @Query("SELECT * FROM habits WHERE habit_id = :habitId")
+    fun getHabitWithDetails(habitId: Int): Flow<HabitWithDetails?>
+
+    @Query("SELECT * FROM habits WHERE status = 'archived'")
+    fun getArchivedHabits(): Flow<List<HabitEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertHabit(habit: HabitEntity): Long
+
+    @Update
+    suspend fun updateHabit(habit: HabitEntity)
+
+    @Delete
+    suspend fun deleteHabit(habit: HabitEntity)
+
+    @Query("UPDATE habits SET status = 'archived', archived_at = :archivedAt WHERE habit_id = :habitId")
+    suspend fun archiveHabit(habitId: Int, archivedAt: java.time.LocalDateTime)
+
+    @Query("UPDATE habits SET status = 'active', archived_at = NULL WHERE habit_id = :habitId")
+    suspend fun unarchiveHabit(habitId: Int)
+}
+
