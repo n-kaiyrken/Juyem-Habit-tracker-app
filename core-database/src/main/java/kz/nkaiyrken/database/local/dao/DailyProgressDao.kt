@@ -1,17 +1,13 @@
 package kz.nkaiyrken.database.local.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 import kz.nkaiyrken.database.local.entity.DailyProgressEntity
 import java.time.LocalDate
 
 @Dao
-interface DailyProgressDao {
+interface DailyProgressDao: BaseDao<DailyProgressEntity> {
     @Query("SELECT * FROM daily_progress WHERE habit_id = :habitId AND date = :date")
     fun getProgress(habitId: Int, date: LocalDate): Flow<DailyProgressEntity?>
 
@@ -24,15 +20,6 @@ interface DailyProgressDao {
 
     @Query("SELECT * FROM daily_progress WHERE date = :date")
     fun getAllProgressForDate(date: LocalDate): Flow<List<DailyProgressEntity>>
-
-    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
-    suspend fun insertProgress(progress: DailyProgressEntity)
-
-    @Update
-    suspend fun updateProgress(progress: DailyProgressEntity)
-
-    @Delete
-    suspend fun deleteProgress(progress: DailyProgressEntity)
 
     @Query("DELETE FROM daily_progress WHERE habit_id = :habitId AND date < :date")
     suspend fun deleteOldProgress(habitId: Int, date: LocalDate)

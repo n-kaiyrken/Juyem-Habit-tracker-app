@@ -2,7 +2,6 @@ package kz.nkaiyrken.database.local.model
 
 import androidx.room.Embedded
 import androidx.room.Relation
-import kz.nkaiyrken.database.local.entity.DailyProgressEntity
 import kz.nkaiyrken.database.local.entity.HabitEntity
 import kz.nkaiyrken.database.local.entity.HabitPlanEntity
 import kz.nkaiyrken.database.local.entity.StatisticsEntity

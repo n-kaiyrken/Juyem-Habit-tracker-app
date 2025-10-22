@@ -2,9 +2,8 @@ package kz.nkaiyrken.database.local.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.Index
 import androidx.room.PrimaryKey
+import java.time.DayOfWeek
 import java.time.LocalDateTime
 import java.time.LocalTime
 
@@ -30,7 +29,7 @@ data class HabitEntity(
     val unit: String? = null,
 
     @ColumnInfo(name = "days_of_week")
-    val daysOfWeek: List<Int> = listOf(1, 2, 3, 4, 5, 6, 7),
+    val daysOfWeek: Set<DayOfWeek> = DayOfWeek.entries.toSet(),
 
     @ColumnInfo(name = "remind_enabled")
     val remindEnabled: Boolean = false,

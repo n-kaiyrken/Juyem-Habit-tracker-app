@@ -1,14 +1,13 @@
 package kz.nkaiyrken.database.local.converters
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.room.TypeConverter
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import kotlin.collections.joinToString
 
-@RequiresApi(Build.VERSION_CODES.O)
 class Converters {
 
     // LocalDateTime converters
@@ -50,14 +49,16 @@ class Converters {
         return value?.let { LocalTime.parse(it, timeFormatter) }
     }
 
-    // List<Int> converter для days_of_week
+    // Set<DayOfWeek> converter для days_of_week
     @TypeConverter
-    fun fromIntList(value: List<Int>?): String? {
-        return value?.joinToString(",")
+    fun fromDayOfWeekSet(value: Set<DayOfWeek>?): String? {
+        return value?.joinToString(",") { it.name } // "MONDAY,TUESDAY,FRIDAY"
     }
 
     @TypeConverter
-    fun toIntList(value: String?): List<Int>? {
-        return value?.split(",")?.mapNotNull { it.toIntOrNull() }
+    fun toDayOfWeekSet(value: String?): Set<DayOfWeek>? {
+        return value?.split(",")?.mapNotNull {
+            try { DayOfWeek.valueOf(it) } catch (e: Exception) { null }
+        }?.toSet()
     }
 }

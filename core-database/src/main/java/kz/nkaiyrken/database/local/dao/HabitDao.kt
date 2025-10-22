@@ -1,18 +1,14 @@
 package kz.nkaiyrken.database.local.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 import kz.nkaiyrken.database.local.entity.HabitEntity
 import kz.nkaiyrken.database.local.model.HabitWithDetails
 
 @Dao
-interface HabitDao {
+interface HabitDao: BaseDao<HabitEntity> {
     @Query("SELECT * FROM habits WHERE status = 'active' ORDER BY order_index ASC")
     fun getActiveHabits(): Flow<List<HabitEntity>>
 
@@ -25,15 +21,6 @@ interface HabitDao {
 
     @Query("SELECT * FROM habits WHERE status = 'archived'")
     fun getArchivedHabits(): Flow<List<HabitEntity>>
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertHabit(habit: HabitEntity): Long
-
-    @Update
-    suspend fun updateHabit(habit: HabitEntity)
-
-    @Delete
-    suspend fun deleteHabit(habit: HabitEntity)
 
     @Query("UPDATE habits SET status = 'archived', archived_at = :archivedAt WHERE habit_id = :habitId")
     suspend fun archiveHabit(habitId: Int, archivedAt: java.time.LocalDateTime)
