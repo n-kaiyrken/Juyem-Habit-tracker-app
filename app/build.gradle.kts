@@ -59,7 +59,6 @@ dependencies {
     implementation(project(":core-ui"))
     implementation(project(":core"))
     implementation(project(":core-data"))
-
     implementation(project(":features:habits"))
 
     // Core Android dependencies

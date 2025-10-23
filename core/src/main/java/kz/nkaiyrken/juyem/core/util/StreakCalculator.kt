@@ -1,7 +1,7 @@
 package kz.nkaiyrken.juyem.core.util
 
 import kz.nkaiyrken.juyem.core.DailyProgress
-import kz.nkaiyrken.juyem.core.ProgressStatus
+import kz.nkaiyrken.juyem.core.DailyProgressStatus
 import java.time.LocalDate
 
 object StreakCalculator {
@@ -19,7 +19,7 @@ object StreakCalculator {
         var currentDate = LocalDate.now()
 
         for (progress in sortedProgress) {
-            if (progress.status == ProgressStatus.COMPLETED) {
+            if (progress.status == DailyProgressStatus.COMPLETED) {
                 if (progress.date == currentDate ||
                     progress.date == currentDate.minusDays(1)) {
                     streak++
@@ -45,7 +45,7 @@ object StreakCalculator {
         var lastDate: LocalDate? = null
 
         for (progress in sortedProgress) {
-            if (progress.status == ProgressStatus.COMPLETED) {
+            if (progress.status == DailyProgressStatus.COMPLETED) {
                 if (lastDate == null ||
                     DateUtils.daysBetween(lastDate, progress.date) == 1) {
                     currentStreak++
@@ -72,7 +72,7 @@ object StreakCalculator {
 
         return progressList.any {
             (it.date == today || it.date == yesterday) &&
-                    it.status == ProgressStatus.COMPLETED
+                    it.status == DailyProgressStatus.COMPLETED
         }
     }
 }

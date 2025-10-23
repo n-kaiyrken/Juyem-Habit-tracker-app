@@ -38,7 +38,10 @@ android {
 
 dependencies {
 
+    //Modules
     implementation(project(":core-ui"))
+    implementation(project(":core-data"))
+    implementation(project(":core"))
 
     // Core Android dependencies
     implementation(libs.androidx.core.ktx)

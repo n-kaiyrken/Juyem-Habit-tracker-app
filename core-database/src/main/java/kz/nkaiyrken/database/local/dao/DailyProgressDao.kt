@@ -24,6 +24,15 @@ interface DailyProgressDao: BaseDao<DailyProgressEntity> {
     @Query("DELETE FROM daily_progress WHERE habit_id = :habitId AND date < :date")
     suspend fun deleteOldProgress(habitId: Int, date: LocalDate)
 
+    @Query("DELETE FROM daily_progress WHERE habit_id = :habitId AND date = :date")
+    suspend fun deleteProgress(habitId: Int, date: LocalDate)
+
+    @Query("DELETE FROM daily_progress WHERE habit_id = :habitId")
+    suspend fun deleteAllProgressForHabit(habitId: Int)
+
+    @Query("SELECT * FROM daily_progress WHERE date BETWEEN :startDate AND :endDate ORDER BY habit_id, date")
+    fun getAllProgressForDateRange(startDate: LocalDate, endDate: LocalDate): Flow<List<DailyProgressEntity>>
+
     // Для календаря: получаем date и status для отображения цветовой индикации
     @Query(
         """

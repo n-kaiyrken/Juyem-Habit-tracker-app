@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.hilt.gradle)
+    alias(libs.plugins.kotlin.kapt)
 }
 
 android {
@@ -34,7 +36,19 @@ android {
 
 dependencies {
 
+    //Modules
+    implementation(project(":core-database"))
+    implementation(project(":core"))
+
     implementation(libs.androidx.core.ktx)
+
+    // Coroutines
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.core)
+
+    // Hilt Dependency Injection
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
 
     implementation(libs.androidx.datastore.preferences)
 }

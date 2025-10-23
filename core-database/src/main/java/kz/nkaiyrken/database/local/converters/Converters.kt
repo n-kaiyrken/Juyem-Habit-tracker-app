@@ -1,6 +1,9 @@
 package kz.nkaiyrken.database.local.converters
 
 import androidx.room.TypeConverter
+import kz.nkaiyrken.database.local.entity.DailyProgressStatusEntity
+import kz.nkaiyrken.database.local.entity.HabitStatusEntity
+import kz.nkaiyrken.database.local.entity.HabitTypeEntity
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -61,4 +64,23 @@ class Converters {
             try { DayOfWeek.valueOf(it) } catch (e: Exception) { null }
         }?.toSet()
     }
+
+    // ENUM converters
+    @TypeConverter
+    fun fromHabitType(value: HabitTypeEntity): String = value.name
+
+    @TypeConverter
+    fun toHabitType(value: String): HabitTypeEntity = HabitTypeEntity.valueOf(value)
+
+    @TypeConverter
+    fun fromHabitStatus(value: HabitStatusEntity): String = value.name
+
+    @TypeConverter
+    fun toHabitStatus(value: String): HabitStatusEntity = HabitStatusEntity.valueOf(value)
+
+    @TypeConverter
+    fun fromDailyProgressStatus(value: DailyProgressStatusEntity): String = value.name
+
+    @TypeConverter
+    fun toDailyProgressStatus(value: String): DailyProgressStatusEntity = DailyProgressStatusEntity.valueOf(value)
 }

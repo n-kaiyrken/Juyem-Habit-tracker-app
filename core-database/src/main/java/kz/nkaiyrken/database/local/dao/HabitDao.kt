@@ -27,5 +27,8 @@ interface HabitDao: BaseDao<HabitEntity> {
 
     @Query("UPDATE habits SET status = 'active', archived_at = NULL WHERE habit_id = :habitId")
     suspend fun unarchiveHabit(habitId: Int)
+
+    @Query("DELETE FROM habits WHERE habit_id = :habitId")
+    suspend fun deleteById(habitId: Int)
 }
 

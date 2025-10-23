@@ -6,10 +6,10 @@ data class DailyProgress(
     val habitId: Int,
     val date: LocalDate,
     val value: Int = 0,
-    val status: ProgressStatus
+    val status: DailyProgressStatus = DailyProgressStatus.EMPTY
 )
 
-enum class ProgressStatus {
+enum class DailyProgressStatus {
     COMPLETED,  // Выполнено полностью
     PARTIAL,    // Частично выполнено
     SKIPPED,    // Пропущено

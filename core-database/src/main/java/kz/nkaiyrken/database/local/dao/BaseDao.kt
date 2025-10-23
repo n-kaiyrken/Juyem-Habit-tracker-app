@@ -9,8 +9,15 @@ import androidx.room.Update
 @Dao
 interface BaseDao<T> {
 
-    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: T): Long
+
+    /**
+     * UPSERT operation - insert or update if exists.
+     * Uses REPLACE strategy which deletes old row and inserts new one.
+     */
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsert(entity: T): Long
 
     @Update
     suspend fun update(entity: T)

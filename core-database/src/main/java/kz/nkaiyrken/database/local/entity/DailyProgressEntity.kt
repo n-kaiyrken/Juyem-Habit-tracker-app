@@ -30,6 +30,14 @@ data class DailyProgressEntity(
     val value: Int = 0,
 
     @ColumnInfo(name = "status")
-    val status: String // "completed", "skipped", "failed", "partial"
+    val status: DailyProgressStatusEntity = DailyProgressStatusEntity.EMPTY
 )
+
+enum class DailyProgressStatusEntity {
+    COMPLETED,  // Выполнено полностью
+    PARTIAL,    // Частично выполнено
+    SKIPPED,    // Пропущено
+    EMPTY,      // Пусто
+    FAILED      // Не выполнено
+}
 

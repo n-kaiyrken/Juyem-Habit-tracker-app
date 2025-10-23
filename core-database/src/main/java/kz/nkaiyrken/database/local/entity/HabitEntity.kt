@@ -20,7 +20,7 @@ data class HabitEntity(
     val orderIndex: Int? = null,
 
     @ColumnInfo(name = "type")
-    val type: String, // "boolean", "counter", "timer"
+    val type: HabitTypeEntity,
 
     @ColumnInfo(name = "goal_value")
     val goalValue: Int? = null,
@@ -38,7 +38,7 @@ data class HabitEntity(
     val remindTime: LocalTime? = null,
 
     @ColumnInfo(name = "status")
-    val status: String = "active", // "active", "paused", "archived"
+    val status: HabitStatusEntity = HabitStatusEntity.ACTIVE,
 
     @ColumnInfo(name = "created_at")
     val createdAt: LocalDateTime = LocalDateTime.now(),
@@ -46,3 +46,15 @@ data class HabitEntity(
     @ColumnInfo(name = "archived_at")
     val archivedAt: LocalDateTime? = null
 )
+
+enum class HabitTypeEntity {
+    BOOLEAN,
+    COUNTER,
+    TIMER
+}
+
+enum class HabitStatusEntity {
+    ACTIVE,
+    PAUSED,
+    ARCHIVED
+}
