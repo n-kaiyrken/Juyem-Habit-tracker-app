@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/nkaiy/Documents/bitbucket/strong-hub-android/lib/core-ui/src/main/kotlin/am/strongte/core/ui/widgets/input/**)",
+      "Read(//c/Users/nkaiy/Documents/bitbucket/strong-hub-android/lib/core-ui/src/main/kotlin/am/strongte/core/ui/widgets/progress/**)",
+      "Read(//c/Users/nkaiy/Documents/bitbucket/strong-hub-android/lib/core-ui/src/main/kotlin/am/strongte/core/ui/widgets/shimmer/**)",
+      "Read(//c/Users/nkaiy/Documents/bitbucket/strong-hub-android/lib/core-ui/src/main/kotlin/am/strongte/core/ui/widgets/switcher/**)",
+      "Read(//c/Users/nkaiy/Documents/bitbucket/strong-hub-android/lib/core-ui/src/main/kotlin/am/strongte/core/ui/widgets/toolbar/**)",
+      "Read(//c/Users/nkaiy/Documents/bitbucket/strong-hub-android/lib/core-ui/src/main/kotlin/am/strongte/core/ui/widgets/dialog/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
