@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.map
 import kz.nkaiyrken.database.local.dao.DailyProgressDao
 import kz.nkaiyrken.juyem.core.DailyProgress
 import kz.nkaiyrken.juyem.core.data.mapper.DailyProgressMapper
-import kz.nkaiyrken.juyem.core.domain.repository.DailyProgressRepository
 import java.time.LocalDate
 import javax.inject.Inject
 

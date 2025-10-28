@@ -1,8 +1,8 @@
-package kz.nkaiyrken.juyem.core.domain.usecase.progress
+package kz.nkaiyrken.juyem.features.habits.domain.usecase.progress
 
 import kotlinx.coroutines.flow.Flow
 import kz.nkaiyrken.juyem.core.DailyProgress
-import kz.nkaiyrken.juyem.core.domain.repository.DailyProgressRepository
+import kz.nkaiyrken.juyem.core.data.repository.DailyProgressRepository
 import kz.nkaiyrken.juyem.core.util.DateUtils
 import java.time.LocalDate
 
@@ -20,7 +20,7 @@ import java.time.LocalDate
  * @param repository источник данных о прогрессе
  */
 class GetWeeklyProgressUseCase(
-    private val repository: DailyProgressRepository
+    private val repository: kz.nkaiyrken.juyem.core.data.repository.DailyProgressRepository
 ) {
     /**
      * Получить прогресс всех привычек за текущую неделю.

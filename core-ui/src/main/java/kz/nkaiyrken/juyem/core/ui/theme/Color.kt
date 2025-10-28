@@ -94,6 +94,7 @@ data class AdditionalColors(
     val shadesSuccessDark3: Color,
     val shadesErrorDark2: Color,
     val shadesErrorDark3: Color,
+    val shadesGray200: Color,
 )
 
 val additionalLightColors = AdditionalColors(
@@ -126,6 +127,7 @@ val additionalLightColors = AdditionalColors(
     shadesSuccessDark3 = Green800,
     shadesErrorDark2 = Red700,
     shadesErrorDark3 = Red800,
+    shadesGray200 = Gray200,
 )
 
 val additionalDarkColors = AdditionalColors(
@@ -158,6 +160,7 @@ val additionalDarkColors = AdditionalColors(
     shadesSuccessDark3 = Green200,
     shadesErrorDark2 = Red300,
     shadesErrorDark3 = Red200,
+    shadesGray200 = Gray100,
 )
 
 val LocalAdditionalColors = staticCompositionLocalOf { additionalLightColors }

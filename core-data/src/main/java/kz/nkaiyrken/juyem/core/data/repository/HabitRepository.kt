@@ -1,15 +1,9 @@
-package kz.nkaiyrken.juyem.core.domain.repository
+package kz.nkaiyrken.juyem.core.data.repository
 
 import kotlinx.coroutines.flow.Flow
 import kz.nkaiyrken.juyem.core.Habit
 import java.time.LocalDateTime
 
-/**
- * Repository интерфейс для работы с привычками.
- *
- * Следует принципам Clean Architecture - интерфейс находится в domain слое,
- * а реализация в data слое (core-data модуль).
- */
 interface HabitRepository {
 
     /**

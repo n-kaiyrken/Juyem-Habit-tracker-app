@@ -1,10 +1,10 @@
-package kz.nkaiyrken.juyem.core.domain.usecase.progress
+package kz.nkaiyrken.juyem.features.habits.domain.usecase.progress
 
 import kotlinx.coroutines.flow.first
 import kz.nkaiyrken.juyem.core.DailyProgress
 import kz.nkaiyrken.juyem.core.DailyProgressStatus
-import kz.nkaiyrken.juyem.core.domain.repository.DailyProgressRepository
-import kz.nkaiyrken.juyem.core.domain.repository.HabitRepository
+import kz.nkaiyrken.juyem.core.data.repository.DailyProgressRepository
+import kz.nkaiyrken.juyem.core.data.repository.HabitRepository
 import kz.nkaiyrken.juyem.core.util.DateUtils
 import java.time.LocalDate
 

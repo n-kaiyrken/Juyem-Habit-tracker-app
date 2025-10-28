@@ -1,12 +1,9 @@
-package kz.nkaiyrken.juyem.core.domain.repository
+package kz.nkaiyrken.juyem.core.data.repository
 
 import kotlinx.coroutines.flow.Flow
 import kz.nkaiyrken.juyem.core.DailyProgress
 import java.time.LocalDate
 
-/**
- * Repository интерфейс для работы с ежедневным прогрессом привычек.
- */
 interface DailyProgressRepository {
 
     /**
