@@ -60,7 +60,7 @@ fun  JuyemTopAppBar(
             title = {
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.headlineMedium,
                     color = contentColor,
                 )
             },
@@ -94,9 +94,9 @@ fun  JuyemTopAppBar(
                     IconButton(onClick = onActionIconClick) {
                         Icon(
                             imageVector = actionIcon,
-                            contentDescription = "More actions",
+                            contentDescription = "Add action",
                             modifier = Modifier.size(24.dp),
-                            tint = contentColor,
+                            tint = MaterialTheme.additionalColors.elementsAccent,
                         )
                     }
                 }

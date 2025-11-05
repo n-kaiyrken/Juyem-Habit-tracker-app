@@ -12,14 +12,16 @@ class DailyProgressMapper @Inject constructor() {
         habitId = entity.habitId,
         date = entity.date,
         value = entity.value,
-        status = entity.status.toDomain()
+        status = entity.status.toDomain(),
+        wasScheduled = entity.wasScheduled
     )
 
     fun toEntity(domain: DailyProgress): DailyProgressEntity = DailyProgressEntity(
         habitId = domain.habitId,
         date = domain.date,
         value = domain.value,
-        status = domain.status.toEntity()
+        status = domain.status.toEntity(),
+        wasScheduled = domain.wasScheduled
     )
 
     fun toDomainList(entities: List<DailyProgressEntity>): List<DailyProgress> =

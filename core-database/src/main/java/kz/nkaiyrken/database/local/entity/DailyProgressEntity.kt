@@ -30,7 +30,10 @@ data class DailyProgressEntity(
     val value: Int = 0,
 
     @ColumnInfo(name = "status")
-    val status: DailyProgressStatusEntity = DailyProgressStatusEntity.EMPTY
+    val status: DailyProgressStatusEntity = DailyProgressStatusEntity.EMPTY,
+
+    @ColumnInfo(name = "was_scheduled", defaultValue = "1")
+    val wasScheduled: Boolean = true,
 )
 
 enum class DailyProgressStatusEntity {

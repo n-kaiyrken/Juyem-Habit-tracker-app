@@ -37,4 +37,31 @@ object DateUtils {
     fun daysBetween(start: LocalDate, end: LocalDate): Int {
         return ChronoUnit.DAYS.between(start, end).toInt()
     }
+
+    fun getCurrentWeekDates(): List<LocalDate> {
+        val weekStart = getWeekStart(LocalDate.now())
+        return getDateRange(weekStart, weekStart.plusDays(6))
+    }
+
+    fun getWeekDates(date: LocalDate): List<LocalDate> {
+        val weekStart = getWeekStart(date)
+        return getDateRange(weekStart, weekStart.plusDays(6))
+    }
 }
+
+// Extension functions for better readability in habit tracking logic
+
+/**
+ * Checks if this date is in the past (before today)
+ */
+fun LocalDate.isPast(): Boolean = this.isBefore(LocalDate.now())
+
+/**
+ * Checks if this date is in the future (after today)
+ */
+fun LocalDate.isFuture(): Boolean = this.isAfter(LocalDate.now())
+
+/**
+ * Checks if this date is today or in the future
+ */
+fun LocalDate.isTodayOrFuture(): Boolean = !this.isBefore(LocalDate.now())

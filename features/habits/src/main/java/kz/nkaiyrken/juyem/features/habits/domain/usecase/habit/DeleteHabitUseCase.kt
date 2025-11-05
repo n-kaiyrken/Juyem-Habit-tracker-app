@@ -1,5 +1,7 @@
 package kz.nkaiyrken.juyem.features.habits.domain.usecase.habit
 
+import javax.inject.Inject
+
 /**
  * ВАЖНО: Удаление привычки автоматически удаляет:
  * - Весь прогресс (DailyProgress) - CASCADE
@@ -8,7 +10,7 @@ package kz.nkaiyrken.juyem.features.habits.domain.usecase.habit
  * - Заметки (Note) - CASCADE
  * - Сессии таймера (TimerSession) - CASCADE
  */
-class DeleteHabitUseCase(
+class DeleteHabitUseCase @Inject constructor(
     private val repository: kz.nkaiyrken.juyem.core.data.repository.HabitRepository
 ) {
     suspend operator fun invoke(id: Int) {

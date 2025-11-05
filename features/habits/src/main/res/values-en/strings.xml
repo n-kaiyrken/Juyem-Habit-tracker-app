@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Buttons -->
+    <string name="start_timer">Start timer</string>
+    <string name="complete">Complete</string>
+    <string name="clear">Clear</string>
+    <string name="note">Note</string>
+    <string name="skip">Skip</string>
+    <string name="ok">OK</string>
+
+    <!-- Labels -->
+    <string name="quantity">Quantity:</string>
+    <string name="collapse">Collapse</string>
+    <string name="expand">Expand</string>
+    <string name="forward_slash">/</string>
+    <string name="previous_week">Previous week</string>
+    <string name="next_week">Next week</string>
+    <string name="add_habit">Add Habit</string>
+    <string name="your_habits_will_be_displayed_here">Your habits will be displayed here</string>
+</resources>

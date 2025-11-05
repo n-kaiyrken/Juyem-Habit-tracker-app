@@ -18,7 +18,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kz.nkaiyrken.juyem.core.ui.theme.Blue500
 import kz.nkaiyrken.juyem.core.ui.theme.Gray100
 import kz.nkaiyrken.juyem.core.ui.theme.Gray500
 import kz.nkaiyrken.juyem.core.ui.theme.Gray900
@@ -34,23 +33,23 @@ import kz.nkaiyrken.juyem.core.ui.theme.Red700
 fun DayChip(
     dayLabel: String,
     modifier: Modifier = Modifier,
-    type: DayChipType = DayChipType.Default,
-    state: DayChipState = DayChipState.Default,
+    type: DayChipType = DayChipType.DEFAULT,
+    state: DayChipState = DayChipState.DEFAULT,
     onClick: () -> Unit = {},
 ) {
     val colors = getDayChipColors(type)
     val shape = RoundedCornerShape(8.dp)
 
     val alpha = when (state) {
-        DayChipState.Disabled -> 0.6f
+        DayChipState.DISABLED -> 0.6f
         else -> 1f
     }
 
-    val borderStroke = if (state == DayChipState.Focus) BorderStroke(1.dp, Gray900) else null
+    val borderStroke = if (state == DayChipState.FOCUS) BorderStroke(1.dp, Gray900) else null
 
     Box(
         modifier = modifier
-            .size(32.dp)
+            .size(40.dp)
             .clip(shape)
             .then(
                 if (borderStroke != null) {
@@ -60,7 +59,7 @@ fun DayChip(
                 }
             )
             .background(colors.background.copy(alpha = alpha))
-            .clickable(enabled = state != DayChipState.Disabled, onClick = onClick),
+            .clickable(enabled = state != DayChipState.DISABLED, onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
         Text(
@@ -76,18 +75,18 @@ fun DayChip(
 }
 
 enum class DayChipType {
-    Empty,
-    Success,
-    Skip,
-    Failure,
-    Default
+    EMPTY,
+    COMPLETED,
+    SKIPPED,
+    FAILED,
+    DEFAULT,
 }
 
 enum class DayChipState {
-    Default,
-    Disabled,
-    Focus,
-    Hover
+    DEFAULT,
+    DISABLED,
+    FOCUS,
+    HOVER
 }
 
 private data class DayChipColors(
@@ -97,23 +96,23 @@ private data class DayChipColors(
 
 private fun getDayChipColors(type: DayChipType): DayChipColors {
     return when (type) {
-        DayChipType.Empty -> DayChipColors(
+        DayChipType.EMPTY -> DayChipColors(
             background = Gray100,
             content = Gray500
         )
-        DayChipType.Success -> DayChipColors(
+        DayChipType.COMPLETED -> DayChipColors(
             background = Green300,
             content = Green700
         )
-        DayChipType.Skip -> DayChipColors(
+        DayChipType.SKIPPED -> DayChipColors(
             background = LightGray100,
             content = Gray500
         )
-        DayChipType.Failure -> DayChipColors(
+        DayChipType.FAILED -> DayChipColors(
             background = Red300,
             content = Red700
         )
-        DayChipType.Default -> DayChipColors(
+        DayChipType.DEFAULT -> DayChipColors(
             background = LightGray200,
             content = Gray500
         )
@@ -128,8 +127,8 @@ private fun DayChipEmptyPreview() {
     JuyemTheme {
         DayChip(
             dayLabel = "ПН",
-            type = DayChipType.Empty,
-            state = DayChipState.Default
+            type = DayChipType.EMPTY,
+            state = DayChipState.DEFAULT
         )
     }
 }
@@ -140,8 +139,8 @@ private fun DayChipEmptyFocusPreview() {
     JuyemTheme {
         DayChip(
             dayLabel = "ПН",
-            type = DayChipType.Empty,
-            state = DayChipState.Focus
+            type = DayChipType.EMPTY,
+            state = DayChipState.FOCUS
         )
     }
 }
@@ -152,8 +151,8 @@ private fun DayChipEmptyDisabledPreview() {
     JuyemTheme {
         DayChip(
             dayLabel = "ПН",
-            type = DayChipType.Empty,
-            state = DayChipState.Disabled
+            type = DayChipType.EMPTY,
+            state = DayChipState.DISABLED
         )
     }
 }
@@ -164,7 +163,7 @@ private fun DayChipDefaultPreview() {
     JuyemTheme {
         DayChip(
             dayLabel = "ВТ",
-            type = DayChipType.Default
+            type = DayChipType.DEFAULT
         )
     }
 }
@@ -175,7 +174,7 @@ private fun DayChipSkipPreview() {
     JuyemTheme {
         DayChip(
             dayLabel = "СР",
-            type = DayChipType.Skip
+            type = DayChipType.SKIPPED
         )
     }
 }
@@ -186,8 +185,8 @@ private fun DayChipSkipFocusPreview() {
     JuyemTheme {
         DayChip(
             dayLabel = "СР",
-            type = DayChipType.Skip,
-            state = DayChipState.Focus
+            type = DayChipType.SKIPPED,
+            state = DayChipState.FOCUS
         )
     }
 }
@@ -198,8 +197,8 @@ private fun DayChipSkipDisabledPreview() {
     JuyemTheme {
         DayChip(
             dayLabel = "СР",
-            type = DayChipType.Skip,
-            state = DayChipState.Disabled
+            type = DayChipType.SKIPPED,
+            state = DayChipState.DISABLED
         )
     }
 }
@@ -210,7 +209,7 @@ private fun DayChipSuccessPreview() {
     JuyemTheme {
         DayChip(
             dayLabel = "ЧТ",
-            type = DayChipType.Success
+            type = DayChipType.COMPLETED
         )
     }
 }
@@ -221,8 +220,8 @@ private fun DayChipSuccessFocusPreview() {
     JuyemTheme {
         DayChip(
             dayLabel = "ЧТ",
-            type = DayChipType.Success,
-            state = DayChipState.Focus
+            type = DayChipType.COMPLETED,
+            state = DayChipState.FOCUS
         )
     }
 }
@@ -233,8 +232,8 @@ private fun DayChipSuccessDisabledPreview() {
     JuyemTheme {
         DayChip(
             dayLabel = "ЧТ",
-            type = DayChipType.Success,
-            state = DayChipState.Disabled
+            type = DayChipType.COMPLETED,
+            state = DayChipState.DISABLED
         )
     }
 }
@@ -245,7 +244,7 @@ private fun DayChipFailurePreview() {
     JuyemTheme {
         DayChip(
             dayLabel = "ПТ",
-            type = DayChipType.Failure
+            type = DayChipType.FAILED
         )
     }
 }
@@ -256,8 +255,8 @@ private fun DayChipFailureFocusPreview() {
     JuyemTheme {
         DayChip(
             dayLabel = "ПТ",
-            type = DayChipType.Failure,
-            state = DayChipState.Focus
+            type = DayChipType.FAILED,
+            state = DayChipState.FOCUS
         )
     }
 }
@@ -268,8 +267,8 @@ private fun DayChipFailureDisabledPreview() {
     JuyemTheme {
         DayChip(
             dayLabel = "ПТ",
-            type = DayChipType.Failure,
-            state = DayChipState.Disabled
+            type = DayChipType.FAILED,
+            state = DayChipState.DISABLED
         )
     }
 }
@@ -281,13 +280,13 @@ private fun DayChipWeekRowPreview() {
         androidx.compose.foundation.layout.Row(
             horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(4.dp)
         ) {
-            DayChip("ПН", type = DayChipType.Success)
-            DayChip("ВТ", type = DayChipType.Success)
-            DayChip("СР", type = DayChipType.Skip)
-            DayChip("ЧТ", type = DayChipType.Failure)
-            DayChip("ПТ", type = DayChipType.Empty)
-            DayChip("СБ", type = DayChipType.Empty)
-            DayChip("ВС", type = DayChipType.Empty)
+            DayChip("ПН", type = DayChipType.COMPLETED)
+            DayChip("ВТ", type = DayChipType.COMPLETED)
+            DayChip("СР", type = DayChipType.SKIPPED)
+            DayChip("ЧТ", type = DayChipType.FAILED)
+            DayChip("ПТ", type = DayChipType.SKIPPED, state = DayChipState.DISABLED)
+            DayChip("СБ", type = DayChipType.EMPTY, state = DayChipState.DISABLED)
+            DayChip("ВС", type = DayChipType.EMPTY)
         }
     }
 }

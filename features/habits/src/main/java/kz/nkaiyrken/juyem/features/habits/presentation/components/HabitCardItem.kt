@@ -32,33 +32,37 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kz.nkaiyrken.juyem.core.DailyProgressStatus
+import kz.nkaiyrken.juyem.core.HabitType
 import kz.nkaiyrken.juyem.core.ui.theme.Gray500
 import kz.nkaiyrken.juyem.core.ui.theme.JuyemTheme
 import kz.nkaiyrken.juyem.core.ui.theme.LightGray100
 import kz.nkaiyrken.juyem.core.ui.theme.additionalColors
 import kz.nkaiyrken.juyem.core.ui.widgets.chip.DayChip
+import kz.nkaiyrken.juyem.core.ui.widgets.chip.DayChipState
 import kz.nkaiyrken.juyem.core.ui.widgets.chip.DayChipType
 import kz.nkaiyrken.juyem.core.ui.widgets.chip.getDayLabel
+import kz.nkaiyrken.juyem.features.habits.R
+import kz.nkaiyrken.juyem.features.habits.presentation.models.HabitAction
+import kz.nkaiyrken.juyem.features.habits.presentation.models.HabitCardUiModel
+import kz.nkaiyrken.juyem.features.habits.presentation.models.DailyProgressUiModel
+import kz.nkaiyrken.juyem.features.habits.presentation.models.NumericProgress
 import java.time.DayOfWeek
+import java.time.LocalDate
 
 @Composable
 fun HabitCardItem(
-    title: String,
+    uiModel: HabitCardUiModel,
+    selectedDay: DayOfWeek,
+    selectedDayProgress: DailyProgressUiModel,
     modifier: Modifier = Modifier,
-    weekProgress: Map<DayOfWeek, DayChipType> = emptyMap(),
-    currentProgressValue: Int? = null,
-    goalProgressValue: Int? = null,
-    isTimer: Boolean = false,
-    unit: String? = null,
     expanded: Boolean = false,
-    isProgressShown: Boolean = false,
     onExpandClick: () -> Unit = {},
-    onDayClick: (DayOfWeek) -> Unit = {},
-    expandedContent: @Composable () -> Unit = {}
+    onAction: (HabitAction) -> Unit = {}
 ) {
-
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -74,7 +78,7 @@ fun HabitCardItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = title,
+                text = uiModel.title,
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.additionalColors.elementsHighContrast,
                 modifier = Modifier.weight(1f)
@@ -86,21 +90,18 @@ fun HabitCardItem(
                 } else {
                     Icons.Default.KeyboardArrowDown
                 },
-                contentDescription = if (expanded) "Collapse" else "Expand",
+                contentDescription = if (expanded) stringResource(R.string.collapse)
+                else stringResource(R.string.expand),
                 tint = Gray500,
                 modifier = Modifier.size(24.dp)
             )
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
-        if (isProgressShown) {
-            HabitCardProgress(
-                currentProgressValue = currentProgressValue ?: 0,
-                goalProgressValue = goalProgressValue ?: 0,
-                isTimer = isTimer,
-                unit  = unit,
-            )
+        if (selectedDayProgress is NumericProgress) {
+            Spacer(modifier = Modifier.height(8.dp))
+            HabitCardProgress(progress = selectedDayProgress)
         }
+
         Spacer(modifier = Modifier.height(8.dp))
 
         // Week progress chips
@@ -109,16 +110,30 @@ fun HabitCardItem(
             modifier = Modifier.fillMaxWidth()
         ) {
             DayOfWeek.entries.forEach { day ->
-                val type = weekProgress[day] ?: DayChipType.Empty
+                val progress = uiModel.weekDaysProgress[day]
+                val type = mapDailyProgressStatusToDayChipType(progress?.status)
+                val isEnabled = progress?.isEnabled ?: true
+
+                val state = when {
+                    !isEnabled -> DayChipState.DISABLED
+                    expanded && day == selectedDay -> DayChipState.FOCUS
+                    else -> DayChipState.DEFAULT
+                }
+
                 DayChip(
                     dayLabel = getDayLabel(day),
                     type = type,
-                    onClick = { onDayClick(day) }
+                    state = state,
+                    onClick = {
+                        if (isEnabled && progress != null) {
+                            onAction(HabitAction.DayChipClick(progress))
+                        }
+                    }
                 )
             }
         }
 
-        // Expanded content
+        // Expanded content - varies by habit type
         AnimatedVisibility(
             visible = expanded,
             enter = fadeIn() + expandVertically(),
@@ -126,110 +141,308 @@ fun HabitCardItem(
         ) {
             Column {
                 Spacer(modifier = Modifier.height(16.dp))
-                expandedContent()
+                when (uiModel.habitType) {
+                    HabitType.BOOLEAN -> DefaultExpandedContent(
+                        onMarkComplete = { onAction(HabitAction.Complete(selectedDayProgress)) },
+                        onEditNote = { onAction(HabitAction.EditNote(selectedDayProgress)) },
+                        onSkip = { onAction(HabitAction.Skip(selectedDayProgress)) },
+                        onClear = { onAction(HabitAction.Clear(selectedDayProgress)) }
+                    )
+                    HabitType.COUNTER -> CounterExpandedContent(
+                        onConfirm = { count ->
+                            onAction(HabitAction.ConfirmCounter(
+                                dailyProgressUiModel = selectedDayProgress,
+                                count = count,
+                            ))
+                        },
+                        onEditNote = { onAction(HabitAction.EditNote(selectedDayProgress)) },
+                        onSkip = { onAction(HabitAction.Skip(selectedDayProgress)) }
+                    )
+                    HabitType.TIMER -> TimerExpandedContent(
+                        onStartTimer = { onAction(HabitAction.StartTimer(selectedDayProgress)) },
+                        onMarkComplete = { onAction(HabitAction.Complete(selectedDayProgress)) },
+                        onEditNote = { onAction(HabitAction.EditNote(selectedDayProgress)) },
+                        onSkip = { onAction(HabitAction.Skip(selectedDayProgress)) },
+                        onClear = { onAction(HabitAction.Clear(selectedDayProgress)) }
+                    )
+                }
             }
         }
     }
 }
 
+/**
+ * Maps DailyProgress status to DayChipType for week progress visualization
+ */
+private fun mapDailyProgressStatusToDayChipType(status: DailyProgressStatus?): DayChipType {
+    return when (status) {
+        DailyProgressStatus.COMPLETED -> DayChipType.COMPLETED
+        DailyProgressStatus.PARTIAL -> DayChipType.EMPTY // Could be different if needed
+        DailyProgressStatus.SKIPPED -> DayChipType.SKIPPED
+        DailyProgressStatus.FAILED -> DayChipType.FAILED
+        DailyProgressStatus.EMPTY -> DayChipType.EMPTY
+        null -> DayChipType.EMPTY
+    }
+}
+
 // ========== Previews ==========
 
-@Preview(name = "Collapsed", showBackground = true)
+@Preview(name = "Boolean Habit - Collapsed", showBackground = true)
 @Composable
-private fun HabitCardItemCollapsedPreview() {
+private fun BooleanHabitCollapsedPreview() {
     JuyemTheme {
         Box(
             modifier = Modifier
-                .width(840.dp)
-                .background(MaterialTheme.additionalColors.elementsHighContrast),
+                .width(400.dp)
+                .background(MaterialTheme.additionalColors.elementsHighContrast)
+                .padding(16.dp)
         ) {
-            HabitCardItem(
-                title = "На зарядку!",
-                weekProgress = mapOf(
-                    DayOfWeek.MONDAY to DayChipType.Failure,
-                    DayOfWeek.TUESDAY to DayChipType.Empty,
-                    DayOfWeek.WEDNESDAY to DayChipType.Success,
-                    DayOfWeek.THURSDAY to DayChipType.Success,
-                    DayOfWeek.FRIDAY to DayChipType.Empty,
-                    DayOfWeek.SATURDAY to DayChipType.Empty,
-                    DayOfWeek.SUNDAY to DayChipType.Empty
+            val today = LocalDate.now()
+            val weekDaysProgress = mapOf(
+                DayOfWeek.MONDAY to DailyProgressUiModel.TypeBoolean(
+                    habitId = 1,
+                    date = today.with(DayOfWeek.MONDAY),
+                    status = DailyProgressStatus.COMPLETED,
+                    isEnabled = true
                 ),
-                modifier = Modifier.padding(16.dp),
-                isProgressShown = true,
-                currentProgressValue = 5,
-                goalProgressValue = 10,
-                unit = "подходов"
+                DayOfWeek.TUESDAY to DailyProgressUiModel.TypeBoolean(
+                    habitId = 1,
+                    date = today.with(DayOfWeek.TUESDAY),
+                    status = DailyProgressStatus.COMPLETED,
+                    isEnabled = true
+                ),
+                DayOfWeek.WEDNESDAY to DailyProgressUiModel.TypeBoolean(
+                    habitId = 1,
+                    date = today.with(DayOfWeek.WEDNESDAY),
+                    status = DailyProgressStatus.SKIPPED,
+                    isEnabled = true
+                ),
+                DayOfWeek.THURSDAY to DailyProgressUiModel.TypeBoolean(
+                    habitId = 1,
+                    date = today.with(DayOfWeek.THURSDAY),
+                    status = DailyProgressStatus.FAILED,
+                    isEnabled = true
+                ),
+                DayOfWeek.FRIDAY to DailyProgressUiModel.TypeBoolean(
+                    habitId = 1,
+                    date = today.with(DayOfWeek.FRIDAY),
+                    status = DailyProgressStatus.COMPLETED,
+                    isEnabled = true
+                ),
+                DayOfWeek.SATURDAY to DailyProgressUiModel.TypeBoolean(
+                    habitId = 1,
+                    date = today.with(DayOfWeek.SATURDAY),
+                    status = DailyProgressStatus.EMPTY,
+                    isEnabled = true
+                ),
+                DayOfWeek.SUNDAY to DailyProgressUiModel.TypeBoolean(
+                    habitId = 1,
+                    date = today.with(DayOfWeek.SUNDAY),
+                    status = DailyProgressStatus.EMPTY,
+                    isEnabled = true
+                )
+            )
+            HabitCardItem(
+                uiModel = HabitCardUiModel(
+                    habitId = 1,
+                    title = "Медитация",
+                    habitType = HabitType.BOOLEAN,
+                    weekDaysProgress = weekDaysProgress
+                ),
+                selectedDay = today.dayOfWeek,
+                selectedDayProgress = weekDaysProgress[today.dayOfWeek]!!
             )
         }
     }
 }
 
-@Preview(name = "Expanded", showBackground = true)
+@Preview(name = "Counter Habit - With Progress", showBackground = true)
 @Composable
-private fun HabitCardItemExpandedPreview() {
+private fun CounterHabitWithProgressPreview() {
+    JuyemTheme {
+        Box(
+            modifier = Modifier
+                .width(400.dp)
+                .background(MaterialTheme.additionalColors.elementsHighContrast)
+                .padding(16.dp)
+        ) {
+            val today = LocalDate.now()
+            val weekDaysProgress = mapOf(
+                DayOfWeek.MONDAY to DailyProgressUiModel.Counter(
+                    habitId = 2,
+                    date = today.with(DayOfWeek.MONDAY),
+                    status = DailyProgressStatus.FAILED,
+                    currentValue = 0,
+                    goalValue = 10,
+                    unit = "подходов",
+                    isEnabled = true
+                ),
+                DayOfWeek.TUESDAY to DailyProgressUiModel.Counter(
+                    habitId = 2,
+                    date = today.with(DayOfWeek.TUESDAY),
+                    status = DailyProgressStatus.EMPTY,
+                    currentValue = 0,
+                    goalValue = 10,
+                    unit = "подходов",
+                    isEnabled = true
+                ),
+                DayOfWeek.WEDNESDAY to DailyProgressUiModel.Counter(
+                    habitId = 2,
+                    date = today.with(DayOfWeek.WEDNESDAY),
+                    status = DailyProgressStatus.COMPLETED,
+                    currentValue = 10,
+                    goalValue = 10,
+                    unit = "подходов",
+                    isEnabled = true
+                ),
+                DayOfWeek.THURSDAY to DailyProgressUiModel.Counter(
+                    habitId = 2,
+                    date = today.with(DayOfWeek.THURSDAY),
+                    status = DailyProgressStatus.COMPLETED,
+                    currentValue = 10,
+                    goalValue = 10,
+                    unit = "подходов",
+                    isEnabled = true
+                ),
+                DayOfWeek.FRIDAY to DailyProgressUiModel.Counter(
+                    habitId = 2,
+                    date = today.with(DayOfWeek.FRIDAY),
+                    status = DailyProgressStatus.EMPTY,
+                    currentValue = 5,
+                    goalValue = 10,
+                    unit = "подходов",
+                    isEnabled = true
+                ),
+                DayOfWeek.SATURDAY to DailyProgressUiModel.Counter(
+                    habitId = 2,
+                    date = today.with(DayOfWeek.SATURDAY),
+                    status = DailyProgressStatus.EMPTY,
+                    currentValue = 0,
+                    goalValue = 10,
+                    unit = "подходов",
+                    isEnabled = true
+                ),
+                DayOfWeek.SUNDAY to DailyProgressUiModel.Counter(
+                    habitId = 2,
+                    date = today.with(DayOfWeek.SUNDAY),
+                    status = DailyProgressStatus.EMPTY,
+                    currentValue = 0,
+                    goalValue = 10,
+                    unit = "подходов",
+                    isEnabled = true
+                )
+            )
+            HabitCardItem(
+                uiModel = HabitCardUiModel(
+                    habitId = 2,
+                    title = "На зарядку!",
+                    habitType = HabitType.COUNTER,
+                    weekDaysProgress = weekDaysProgress
+                ),
+                selectedDay = today.dayOfWeek,
+                selectedDayProgress = DailyProgressUiModel.Counter(
+                    habitId = 2,
+                    date = today,
+                    status = DailyProgressStatus.PARTIAL,
+                    currentValue = 5,
+                    goalValue = 10,
+                    unit = "подходов",
+                    isEnabled = true
+                )
+            )
+        }
+    }
+}
+
+@Preview(name = "Counter Habit - Expanded", showBackground = true)
+@Composable
+private fun CounterHabitExpandedPreview() {
     JuyemTheme {
         var expanded by remember { mutableStateOf(true) }
-        HabitCardItem(
-            title = "На зарядку!",
-            weekProgress = mapOf(
-                DayOfWeek.MONDAY to DayChipType.Failure,
-                DayOfWeek.TUESDAY to DayChipType.Skip,
-                DayOfWeek.WEDNESDAY to DayChipType.Skip,
-                DayOfWeek.THURSDAY to DayChipType.Success,
-                DayOfWeek.FRIDAY to DayChipType.Skip,
-                DayOfWeek.SATURDAY to DayChipType.Empty,
-                DayOfWeek.SUNDAY to DayChipType.Empty
-            ),
-            expanded = expanded,
-            onExpandClick = { expanded = !expanded },
-            expandedContent = {
-                Text(
-                    text = "Additional habit details go here...",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Gray500
+        Box(
+            modifier = Modifier
+                .width(400.dp)
+                .background(MaterialTheme.additionalColors.elementsHighContrast)
+                .padding(16.dp)
+        ) {
+            val today = LocalDate.now()
+            val weekDaysProgress = mapOf(
+                DayOfWeek.MONDAY to DailyProgressUiModel.Counter(
+                    habitId = 4,
+                    date = today.with(DayOfWeek.MONDAY),
+                    status = DailyProgressStatus.COMPLETED,
+                    currentValue = 8,
+                    goalValue = 8,
+                    unit = "стаканов",
+                    isEnabled = true
+                ),
+                DayOfWeek.TUESDAY to DailyProgressUiModel.Counter(
+                    habitId = 4,
+                    date = today.with(DayOfWeek.TUESDAY),
+                    status = DailyProgressStatus.COMPLETED,
+                    currentValue = 8,
+                    goalValue = 8,
+                    unit = "стаканов",
+                    isEnabled = true
+                ),
+                DayOfWeek.WEDNESDAY to DailyProgressUiModel.Counter(
+                    habitId = 4,
+                    date = today.with(DayOfWeek.WEDNESDAY),
+                    status = DailyProgressStatus.COMPLETED,
+                    currentValue = 8,
+                    goalValue = 8,
+                    unit = "стаканов",
+                    isEnabled = true
+                ),
+                DayOfWeek.THURSDAY to DailyProgressUiModel.Counter(
+                    habitId = 4,
+                    date = today.with(DayOfWeek.THURSDAY),
+                    status = DailyProgressStatus.COMPLETED,
+                    currentValue = 8,
+                    goalValue = 8,
+                    unit = "стаканов",
+                    isEnabled = true
+                ),
+                DayOfWeek.FRIDAY to DailyProgressUiModel.Counter(
+                    habitId = 4,
+                    date = today.with(DayOfWeek.FRIDAY),
+                    status = DailyProgressStatus.COMPLETED,
+                    currentValue = 8,
+                    goalValue = 8,
+                    unit = "стаканов",
+                    isEnabled = true
+                ),
+                DayOfWeek.SATURDAY to DailyProgressUiModel.Counter(
+                    habitId = 4,
+                    date = today.with(DayOfWeek.SATURDAY),
+                    status = DailyProgressStatus.EMPTY,
+                    currentValue = 3,
+                    goalValue = 8,
+                    unit = "стаканов",
+                    isEnabled = true
+                ),
+                DayOfWeek.SUNDAY to DailyProgressUiModel.Counter(
+                    habitId = 4,
+                    date = today.with(DayOfWeek.SUNDAY),
+                    status = DailyProgressStatus.EMPTY,
+                    currentValue = 0,
+                    goalValue = 8,
+                    unit = "стаканов",
+                    isEnabled = true
                 )
-            },
-            modifier = Modifier.padding(16.dp)
-        )
-    }
-}
-
-@Preview(name = "Perfect week", showBackground = true)
-@Composable
-private fun HabitCardItemPerfectWeekPreview() {
-    JuyemTheme {
-        HabitCardItem(
-            title = "Читать 30 минут",
-            weekProgress = mapOf(
-                DayOfWeek.MONDAY to DayChipType.Success,
-                DayOfWeek.TUESDAY to DayChipType.Success,
-                DayOfWeek.WEDNESDAY to DayChipType.Success,
-                DayOfWeek.THURSDAY to DayChipType.Success,
-                DayOfWeek.FRIDAY to DayChipType.Success,
-                DayOfWeek.SATURDAY to DayChipType.Success,
-                DayOfWeek.SUNDAY to DayChipType.Success
-            ),
-            modifier = Modifier.padding(16.dp)
-        )
-    }
-}
-
-@Preview(name = "Mixed progress", showBackground = true)
-@Composable
-private fun HabitCardItemMixedProgressPreview() {
-    JuyemTheme {
-        HabitCardItem(
-            title = "Медитация",
-            weekProgress = mapOf(
-                DayOfWeek.MONDAY to DayChipType.Success,
-                DayOfWeek.TUESDAY to DayChipType.Success,
-                DayOfWeek.WEDNESDAY to DayChipType.Skip,
-                DayOfWeek.THURSDAY to DayChipType.Failure,
-                DayOfWeek.FRIDAY to DayChipType.Success,
-                DayOfWeek.SATURDAY to DayChipType.Skip,
-                DayOfWeek.SUNDAY to DayChipType.Empty
-            ),
-            modifier = Modifier.padding(16.dp)
-        )
+            )
+            HabitCardItem(
+                uiModel = HabitCardUiModel(
+                    habitId = 4,
+                    title = "Выпить воды",
+                    habitType = HabitType.COUNTER,
+                    weekDaysProgress = weekDaysProgress
+                ),
+                selectedDay = DayOfWeek.MONDAY,
+                selectedDayProgress = weekDaysProgress[DayOfWeek.MONDAY]!!,
+                expanded = expanded,
+                onExpandClick = { expanded = !expanded }
+            )
+        }
     }
 }

@@ -35,7 +35,7 @@ fun WeekProgressExample(
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         DayOfWeek.values().forEach { day ->
-            val type = weekProgress[day] ?: DayChipType.Empty
+            val type = weekProgress[day] ?: DayChipType.EMPTY
             DayChip(
                 dayLabel = getDayLabel(day),
                 type = type,
@@ -55,13 +55,13 @@ private fun InteractiveWeekProgressPreview() {
         var weekProgress by remember {
             mutableStateOf(
                 mapOf(
-                    DayOfWeek.MONDAY to DayChipType.Success,
-                    DayOfWeek.TUESDAY to DayChipType.Success,
-                    DayOfWeek.WEDNESDAY to DayChipType.Skip,
-                    DayOfWeek.THURSDAY to DayChipType.Failure,
-                    DayOfWeek.FRIDAY to DayChipType.Empty,
-                    DayOfWeek.SATURDAY to DayChipType.Empty,
-                    DayOfWeek.SUNDAY to DayChipType.Empty
+                    DayOfWeek.MONDAY to DayChipType.COMPLETED,
+                    DayOfWeek.TUESDAY to DayChipType.COMPLETED,
+                    DayOfWeek.WEDNESDAY to DayChipType.SKIPPED,
+                    DayOfWeek.THURSDAY to DayChipType.FAILED,
+                    DayOfWeek.FRIDAY to DayChipType.EMPTY,
+                    DayOfWeek.SATURDAY to DayChipType.EMPTY,
+                    DayOfWeek.SUNDAY to DayChipType.EMPTY
                 )
             )
         }
@@ -75,13 +75,13 @@ private fun InteractiveWeekProgressPreview() {
             WeekProgressExample(
                 weekProgress = weekProgress,
                 onDayClick = { day ->
-                    val currentType = weekProgress[day] ?: DayChipType.Empty
+                    val currentType = weekProgress[day] ?: DayChipType.EMPTY
                     val nextType = when (currentType) {
-                        DayChipType.Empty -> DayChipType.Success
-                        DayChipType.Success -> DayChipType.Skip
-                        DayChipType.Skip -> DayChipType.Failure
-                        DayChipType.Failure -> DayChipType.Empty
-                        DayChipType.Default -> DayChipType.Success
+                        DayChipType.EMPTY -> DayChipType.COMPLETED
+                        DayChipType.COMPLETED -> DayChipType.SKIPPED
+                        DayChipType.SKIPPED -> DayChipType.FAILED
+                        DayChipType.FAILED -> DayChipType.EMPTY
+                        DayChipType.DEFAULT -> DayChipType.COMPLETED
                     }
                     weekProgress = weekProgress + (day to nextType)
                 }
@@ -118,43 +118,43 @@ private fun HabitWeekHistoryPreview() {
         val weeks = listOf(
             // Week 1 - Perfect week
             mapOf(
-                DayOfWeek.MONDAY to DayChipType.Success,
-                DayOfWeek.TUESDAY to DayChipType.Success,
-                DayOfWeek.WEDNESDAY to DayChipType.Success,
-                DayOfWeek.THURSDAY to DayChipType.Success,
-                DayOfWeek.FRIDAY to DayChipType.Success,
-                DayOfWeek.SATURDAY to DayChipType.Success,
-                DayOfWeek.SUNDAY to DayChipType.Success
+                DayOfWeek.MONDAY to DayChipType.COMPLETED,
+                DayOfWeek.TUESDAY to DayChipType.COMPLETED,
+                DayOfWeek.WEDNESDAY to DayChipType.COMPLETED,
+                DayOfWeek.THURSDAY to DayChipType.COMPLETED,
+                DayOfWeek.FRIDAY to DayChipType.COMPLETED,
+                DayOfWeek.SATURDAY to DayChipType.COMPLETED,
+                DayOfWeek.SUNDAY to DayChipType.COMPLETED
             ),
             // Week 2 - One skip
             mapOf(
-                DayOfWeek.MONDAY to DayChipType.Success,
-                DayOfWeek.TUESDAY to DayChipType.Success,
-                DayOfWeek.WEDNESDAY to DayChipType.Skip,
-                DayOfWeek.THURSDAY to DayChipType.Success,
-                DayOfWeek.FRIDAY to DayChipType.Success,
-                DayOfWeek.SATURDAY to DayChipType.Success,
-                DayOfWeek.SUNDAY to DayChipType.Success
+                DayOfWeek.MONDAY to DayChipType.COMPLETED,
+                DayOfWeek.TUESDAY to DayChipType.COMPLETED,
+                DayOfWeek.WEDNESDAY to DayChipType.SKIPPED,
+                DayOfWeek.THURSDAY to DayChipType.COMPLETED,
+                DayOfWeek.FRIDAY to DayChipType.COMPLETED,
+                DayOfWeek.SATURDAY to DayChipType.COMPLETED,
+                DayOfWeek.SUNDAY to DayChipType.COMPLETED
             ),
             // Week 3 - Mixed
             mapOf(
-                DayOfWeek.MONDAY to DayChipType.Success,
-                DayOfWeek.TUESDAY to DayChipType.Failure,
-                DayOfWeek.WEDNESDAY to DayChipType.Success,
-                DayOfWeek.THURSDAY to DayChipType.Skip,
-                DayOfWeek.FRIDAY to DayChipType.Success,
-                DayOfWeek.SATURDAY to DayChipType.Failure,
-                DayOfWeek.SUNDAY to DayChipType.Success
+                DayOfWeek.MONDAY to DayChipType.COMPLETED,
+                DayOfWeek.TUESDAY to DayChipType.FAILED,
+                DayOfWeek.WEDNESDAY to DayChipType.COMPLETED,
+                DayOfWeek.THURSDAY to DayChipType.SKIPPED,
+                DayOfWeek.FRIDAY to DayChipType.COMPLETED,
+                DayOfWeek.SATURDAY to DayChipType.FAILED,
+                DayOfWeek.SUNDAY to DayChipType.COMPLETED
             ),
             // Week 4 - Current week (partial)
             mapOf(
-                DayOfWeek.MONDAY to DayChipType.Success,
-                DayOfWeek.TUESDAY to DayChipType.Success,
-                DayOfWeek.WEDNESDAY to DayChipType.Success,
-                DayOfWeek.THURSDAY to DayChipType.Empty,
-                DayOfWeek.FRIDAY to DayChipType.Empty,
-                DayOfWeek.SATURDAY to DayChipType.Empty,
-                DayOfWeek.SUNDAY to DayChipType.Empty
+                DayOfWeek.MONDAY to DayChipType.COMPLETED,
+                DayOfWeek.TUESDAY to DayChipType.COMPLETED,
+                DayOfWeek.WEDNESDAY to DayChipType.COMPLETED,
+                DayOfWeek.THURSDAY to DayChipType.EMPTY,
+                DayOfWeek.FRIDAY to DayChipType.EMPTY,
+                DayOfWeek.SATURDAY to DayChipType.EMPTY,
+                DayOfWeek.SUNDAY to DayChipType.EMPTY
             )
         )
 
@@ -180,12 +180,12 @@ fun getDayChipTypeFromProgress(
 ): DayChipType {
     return when {
         // Future dates
-        date.isAfter(today) -> DayChipType.Empty
+        date.isAfter(today) -> DayChipType.EMPTY
 
         // Today or past
-        isCompleted == true -> DayChipType.Success
-        isSkipped == true -> DayChipType.Skip
-        isCompleted == false -> DayChipType.Failure
-        else -> DayChipType.Empty
+        isCompleted == true -> DayChipType.COMPLETED
+        isSkipped == true -> DayChipType.SKIPPED
+        isCompleted == false -> DayChipType.FAILED
+        else -> DayChipType.EMPTY
     }
 }

@@ -67,4 +67,11 @@ dependencies {
     // Hilt Dependency Injection
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
+
+    // Testing
+    testImplementation(kotlin("test"))
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
+    kaptTest(libs.hilt.android.compiler)
+
 }

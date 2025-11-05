@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -18,15 +19,31 @@ import androidx.compose.ui.unit.sp
 import kz.nkaiyrken.juyem.core.ui.theme.Gray900
 import kz.nkaiyrken.juyem.core.ui.theme.JuyemTheme
 import kz.nkaiyrken.juyem.core.ui.theme.LightGray200
+import kz.nkaiyrken.juyem.features.habits.R
+import kz.nkaiyrken.juyem.features.habits.presentation.models.DailyProgressUiModel
+import kz.nkaiyrken.juyem.features.habits.presentation.models.NumericProgress
 
 @Composable
 fun HabitCardProgress(
-    currentProgressValue: Int,
-    goalProgressValue: Int,
-    isTimer: Boolean,
-    modifier: Modifier = Modifier,
-    unit: String? = null
+    progress: NumericProgress,
+    modifier: Modifier = Modifier
 ) {
+
+    val currentText = when (progress) {
+        is DailyProgressUiModel.Timer -> formatTime(progress.currentValue)
+        is DailyProgressUiModel.Counter -> progress.currentValue.toString()
+    }
+
+    val goalText = when (progress) {
+        is DailyProgressUiModel.Timer -> formatTime(progress.goalValue)
+        is DailyProgressUiModel.Counter -> progress.goalValue.toString()
+    }
+
+    val unit = when (progress) {
+        is DailyProgressUiModel.Counter -> progress.unit
+        is DailyProgressUiModel.Timer -> null
+    }
+
     Box(
         modifier = modifier
             .background(
@@ -39,7 +56,7 @@ fun HabitCardProgress(
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
-                text = getProgressValue(currentProgressValue, isTimer),
+                text = currentText,
                 style = MaterialTheme.typography.bodyLarge.copy(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
@@ -47,7 +64,7 @@ fun HabitCardProgress(
                 color = Gray900
             )
             Text(
-                text = "/",
+                text = stringResource(R.string.forward_slash),
                 style = MaterialTheme.typography.bodyLarge.copy(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Normal
@@ -55,7 +72,7 @@ fun HabitCardProgress(
                 color = Gray900
             )
             Text(
-                text = getProgressValue(goalProgressValue, isTimer),
+                text = goalText,
                 style = MaterialTheme.typography.bodyLarge.copy(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Normal
@@ -76,15 +93,14 @@ fun HabitCardProgress(
     }
 }
 
-private fun getProgressValue(value: Int, isTimer: Boolean): String {
-    var currentValue = value.toString()
-    if (isTimer) {
-        val hours = value / 3600
-        val minutes = (value % 3600) / 60
-        val secs = value % 60
-        currentValue = String.format("%02d:%02d:%02d", hours, minutes, secs)
-    }
-    return currentValue
+/**
+ * Formats time in seconds to HH:MM:SS format
+ */
+private fun formatTime(seconds: Int): String {
+    val hours = seconds / 3600
+    val minutes = (seconds % 3600) / 60
+    val secs = seconds % 60
+    return String.format("%02d:%02d:%02d", hours, minutes, secs)
 }
 
 // ========== Previews ==========
@@ -98,23 +114,35 @@ private fun HabitCardProgressPreview() {
             modifier = Modifier.padding(16.dp)
         ) {
             HabitCardProgress(
-                currentProgressValue = 3,
-                goalProgressValue = 8,
-                isTimer = false,
-                unit = "стаканов"
+                progress = DailyProgressUiModel.Counter(
+                    habitId = 1,
+                    date = java.time.LocalDate.now(),
+                    status = kz.nkaiyrken.juyem.core.DailyProgressStatus.PARTIAL,
+                    currentValue = 3,
+                    goalValue = 8,
+                    unit = "стаканов"
+                )
             )
 
             HabitCardProgress(
-                currentProgressValue = 45,
-                goalProgressValue = 60,
-                isTimer = false,
-                unit = "минут"
+                progress = DailyProgressUiModel.Counter(
+                    habitId = 2,
+                    date = java.time.LocalDate.now(),
+                    status = kz.nkaiyrken.juyem.core.DailyProgressStatus.PARTIAL,
+                    currentValue = 45,
+                    goalValue = 60,
+                    unit = "минут"
+                )
             )
 
             HabitCardProgress(
-                currentProgressValue = 10,
-                goalProgressValue = 100,
-                isTimer = true
+                progress = DailyProgressUiModel.Timer(
+                    habitId = 3,
+                    date = java.time.LocalDate.now(),
+                    status = kz.nkaiyrken.juyem.core.DailyProgressStatus.PARTIAL,
+                    currentValue = 3610,
+                    goalValue = 7200
+                )
             )
         }
     }

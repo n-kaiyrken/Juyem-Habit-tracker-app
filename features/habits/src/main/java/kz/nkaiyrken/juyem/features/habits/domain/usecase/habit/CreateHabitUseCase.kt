@@ -2,8 +2,9 @@ package kz.nkaiyrken.juyem.features.habits.domain.usecase.habit
 
 import kz.nkaiyrken.juyem.core.Habit
 import kz.nkaiyrken.juyem.core.data.repository.HabitRepository
+import javax.inject.Inject
 
-class CreateHabitUseCase(
+class CreateHabitUseCase @Inject constructor(
     private val repository: HabitRepository
 ) {
     suspend operator fun invoke(habit: Habit): Long {

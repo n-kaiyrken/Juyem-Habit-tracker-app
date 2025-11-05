@@ -1,10 +1,12 @@
 package kz.nkaiyrken.juyem.features.habits.domain.usecase.progress
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kz.nkaiyrken.juyem.core.DailyProgress
 import kz.nkaiyrken.juyem.core.data.repository.DailyProgressRepository
 import kz.nkaiyrken.juyem.core.util.DateUtils
 import java.time.LocalDate
+import javax.inject.Inject
 
 /**
  * Use Case для получения прогресса всех привычек за неделю.
@@ -19,8 +21,8 @@ import java.time.LocalDate
  *
  * @param repository источник данных о прогрессе
  */
-class GetWeeklyProgressUseCase(
-    private val repository: kz.nkaiyrken.juyem.core.data.repository.DailyProgressRepository
+class GetWeeklyProgressUseCase @Inject constructor (
+    private val repository: DailyProgressRepository
 ) {
     /**
      * Получить прогресс всех привычек за текущую неделю.
@@ -44,27 +46,5 @@ class GetWeeklyProgressUseCase(
         val weekEnd = DateUtils.getWeekEnd(date)
 
         return repository.getProgressForDateRange(weekStart, weekEnd)
-    }
-
-    /**
-     * Получить список дат текущей недели (7 дней: пн-вс).
-     * Используется UI для отображения заголовков дней.
-     *
-     * @return список из 7 дат начиная с понедельника
-     */
-    fun getCurrentWeekDates(): List<LocalDate> {
-        val weekStart = DateUtils.getWeekStart(LocalDate.now())
-        return DateUtils.getDateRange(weekStart, weekStart.plusDays(6))
-    }
-
-    /**
-     * Получить список дат для недели содержащей указанную дату.
-     *
-     * @param date дата внутри нужной недели
-     * @return список из 7 дат
-     */
-    fun getWeekDates(date: LocalDate): List<LocalDate> {
-        val weekStart = DateUtils.getWeekStart(date)
-        return DateUtils.getDateRange(weekStart, weekStart.plusDays(6))
     }
 }

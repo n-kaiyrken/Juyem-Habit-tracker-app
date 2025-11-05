@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Buttons -->
+    <string name="start_timer">Запустить таймер</string>
+    <string name="complete">Завершить</string>
+    <string name="clear">Очистить</string>
+    <string name="note">Заметка</string>
+    <string name="skip">Пропустить</string>
+    <string name="ok">OK</string>
+
+    <!-- Labels -->
+    <string name="quantity">Количество:</string>
+    <string name="collapse">Свернуть</string>
+    <string name="expand">Развернуть</string>
+    <string name="forward_slash">/</string>
+    <string name="previous_week">Предыдущая неделя</string>
+    <string name="next_week">Следующая неделя</string>
+    <string name="add_habit">Добавить привычку</string>
+    <string name="your_habits_will_be_displayed_here">Здесь будут отображаться твои привычки</string>
+</resources>

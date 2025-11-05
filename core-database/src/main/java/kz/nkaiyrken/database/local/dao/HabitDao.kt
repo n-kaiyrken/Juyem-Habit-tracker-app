@@ -9,7 +9,7 @@ import kz.nkaiyrken.database.local.model.HabitWithDetails
 
 @Dao
 interface HabitDao: BaseDao<HabitEntity> {
-    @Query("SELECT * FROM habits WHERE status = 'active' ORDER BY order_index ASC")
+    @Query("SELECT * FROM habits WHERE status = 'ACTIVE' ORDER BY order_index ASC")
     fun getActiveHabits(): Flow<List<HabitEntity>>
 
     @Query("SELECT * FROM habits WHERE habit_id = :habitId")

@@ -2,8 +2,9 @@ package kz.nkaiyrken.juyem.features.habits.domain.usecase.habit
 
 import kz.nkaiyrken.juyem.core.data.repository.HabitRepository
 import java.time.LocalDateTime
+import javax.inject.Inject
 
-class ArchiveHabitUseCase(
+class ArchiveHabitUseCase @Inject constructor(
     private val repository: HabitRepository
 ) {
     suspend operator fun invoke(id: Int, archivedAt: LocalDateTime = LocalDateTime.now()) {

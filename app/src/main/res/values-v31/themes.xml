@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Theme for Android 12+ with enhanced splash screen -->
+    <style name="Theme.Juyem" parent="android:Theme.Material.Light.NoActionBar">
+        <!-- Splash Screen attributes for Android 12+ -->
+        <item name="android:windowSplashScreenBackground">@color/ic_launcher_background</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_splash_icon</item>
+        <item name="android:windowSplashScreenAnimationDuration">300</item>
+:        <item name="postSplashScreenTheme">@style/Theme.Juyem.Main</item>
+    </style>
+
+    <!-- Theme after splash screen -->
+    <style name="Theme.Juyem.Main" parent="android:Theme.Material.Light.NoActionBar" />
+
+</resources>

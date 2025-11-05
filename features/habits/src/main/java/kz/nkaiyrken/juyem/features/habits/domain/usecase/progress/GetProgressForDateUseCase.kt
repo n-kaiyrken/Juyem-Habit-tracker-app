@@ -4,8 +4,9 @@ import kotlinx.coroutines.flow.Flow
 import kz.nkaiyrken.juyem.core.DailyProgress
 import kz.nkaiyrken.juyem.core.data.repository.DailyProgressRepository
 import java.time.LocalDate
+import javax.inject.Inject
 
-class GetProgressForDateUseCase(
+class GetProgressForDateUseCase @Inject constructor(
     private val progressRepository: DailyProgressRepository
 ) {
     operator fun invoke(habitId: Int, date: LocalDate): Flow<DailyProgress?> {
