@@ -17,6 +17,10 @@ class DefaultHabitRepository @Inject constructor(
         habitDao.getActiveHabits()
             .map { entities -> mapper.toDomainList(entities) }
 
+    override fun getActiveHabitsForWeek(weekEndDate: LocalDateTime): Flow<List<Habit>> =
+        habitDao.getActiveHabitsForWeek(weekEndDate)
+            .map { entities -> mapper.toDomainList(entities) }
+
     override fun getHabitById(id: Int): Flow<Habit?> =
         habitDao.getHabitById(id)
             .map { entity -> entity?.let { mapper.toDomain(it) } }

@@ -12,6 +12,9 @@ interface HabitDao: BaseDao<HabitEntity> {
     @Query("SELECT * FROM habits WHERE status = 'ACTIVE' ORDER BY order_index ASC")
     fun getActiveHabits(): Flow<List<HabitEntity>>
 
+    @Query("SELECT * FROM habits WHERE status = 'ACTIVE' AND created_at <= :weekEndDate ORDER BY order_index ASC")
+    fun getActiveHabitsForWeek(weekEndDate: java.time.LocalDateTime): Flow<List<HabitEntity>>
+
     @Query("SELECT * FROM habits WHERE habit_id = :habitId")
     fun getHabitById(habitId: Int): Flow<HabitEntity?>
 

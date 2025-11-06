@@ -16,7 +16,7 @@ import kz.nkaiyrken.juyem.core.data.repository.DailyProgressRepository
 import kz.nkaiyrken.juyem.core.data.repository.HabitRepository
 import kz.nkaiyrken.juyem.features.habits.domain.usecase.habit.CreateHabitUseCase
 import kz.nkaiyrken.juyem.features.habits.domain.usecase.habit.GetActiveHabitsUseCase
-import kz.nkaiyrken.juyem.features.habits.domain.usecase.progress.GetWeeklyProgressUseCase
+import kz.nkaiyrken.juyem.features.habits.domain.usecase.progress.GetProgressForWeekUseCase
 import kz.nkaiyrken.juyem.features.habits.domain.usecase.progress.UpsertDailyProgressUseCase
 import kz.nkaiyrken.juyem.features.habits.presentation.HabitListViewModel
 import org.junit.After
@@ -42,7 +42,7 @@ class HabitListViewModelTest {
         progressRepository = FakeDailyProgressRepository()
 
         val getActiveHabitsUseCase = GetActiveHabitsUseCase(habitRepository)
-        val getWeeklyProgressUseCase = GetWeeklyProgressUseCase(progressRepository)
+        val getWeeklyProgressUseCase = GetProgressForWeekUseCase(progressRepository)
         val upsertProgressUseCase = UpsertDailyProgressUseCase(progressRepository)
         val createHabitUseCase = CreateHabitUseCase(habitRepository)
 

@@ -1,7 +1,6 @@
 package kz.nkaiyrken.juyem.features.habits.domain.usecase.progress
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import kz.nkaiyrken.juyem.core.DailyProgress
 import kz.nkaiyrken.juyem.core.data.repository.DailyProgressRepository
 import kz.nkaiyrken.juyem.core.util.DateUtils
@@ -21,7 +20,7 @@ import javax.inject.Inject
  *
  * @param repository источник данных о прогрессе
  */
-class GetWeeklyProgressUseCase @Inject constructor (
+class GetProgressForWeekUseCase @Inject constructor (
     private val repository: DailyProgressRepository
 ) {
     /**

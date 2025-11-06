@@ -15,6 +15,15 @@ interface HabitRepository {
     fun getActiveHabits(): Flow<List<Habit>>
 
     /**
+     * Получить список активных привычек, созданных не позже указанной даты.
+     * Используется для отображения привычек на конкретной неделе.
+     *
+     * @param weekEndDate конец недели (привычки созданные после этой даты не будут включены)
+     * @return Flow со списком активных привычек, отсортированных по orderIndex
+     */
+    fun getActiveHabitsForWeek(weekEndDate: LocalDateTime): Flow<List<Habit>>
+
+    /**
      * Получить привычку по ID.
      *
      * @param id уникальный идентификатор привычки

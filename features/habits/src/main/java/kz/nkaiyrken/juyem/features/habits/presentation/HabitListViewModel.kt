@@ -1,6 +1,5 @@
 package kz.nkaiyrken.juyem.features.habits.presentation
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,8 +22,8 @@ import kz.nkaiyrken.juyem.core.util.DateUtils.getWeekStart
 import kz.nkaiyrken.juyem.core.util.isFuture
 import kz.nkaiyrken.juyem.core.util.isPast
 import kz.nkaiyrken.juyem.features.habits.domain.usecase.habit.CreateHabitUseCase
-import kz.nkaiyrken.juyem.features.habits.domain.usecase.habit.GetActiveHabitsUseCase
-import kz.nkaiyrken.juyem.features.habits.domain.usecase.progress.GetWeeklyProgressUseCase
+import kz.nkaiyrken.juyem.features.habits.domain.usecase.habit.GetHabitsForWeekUseCase
+import kz.nkaiyrken.juyem.features.habits.domain.usecase.progress.GetProgressForWeekUseCase
 import kz.nkaiyrken.juyem.features.habits.domain.usecase.progress.UpsertDailyProgressUseCase
 import kz.nkaiyrken.juyem.features.habits.presentation.models.DailyProgressUiModel
 import kz.nkaiyrken.juyem.features.habits.presentation.models.HabitAction
@@ -36,8 +35,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HabitListViewModel @Inject constructor(
-    getActiveHabitsUseCase: GetActiveHabitsUseCase,
-    getWeeklyProgressUseCase: GetWeeklyProgressUseCase,
+    getHabitsForWeekUseCase: GetHabitsForWeekUseCase,
+    getProgressForWeekUseCase: GetProgressForWeekUseCase,
     private val upsertDailyProgressUseCase: UpsertDailyProgressUseCase,
     createHabitUseCase: CreateHabitUseCase,
 ) : ViewModel() {
@@ -45,37 +44,41 @@ class HabitListViewModel @Inject constructor(
     private val _currentWeekStartDate = MutableStateFlow(getWeekStart(LocalDate.now()))
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val uiState: StateFlow<HabitListUiState> = combine(
-        getActiveHabitsUseCase(),
-        _currentWeekStartDate.flatMapLatest { date ->
-            getWeeklyProgressUseCase(date)
-        },
-    ) { habits, progress ->
-        HabitListUiState(
-            contentState = when {
-                habits.isEmpty() -> HabitListUiState.ContentState.Empty
-                else -> HabitListUiState.ContentState.Success(
-                    habits = mapToHabitsCardUiModels(habits = habits, weekProgress = progress)
-                )
-            },
-            currentWeekStartDate = _currentWeekStartDate.value,
-        )
-    }
-        .catch { error ->
-            emit(
+    val uiState: StateFlow<HabitListUiState> =
+        _currentWeekStartDate.flatMapLatest { weekStartDate ->
+            combine(
+                getHabitsForWeekUseCase(weekStartDate),
+                getProgressForWeekUseCase(weekStartDate),
+            ) { habits, progress ->
                 HabitListUiState(
-                    contentState = HabitListUiState.ContentState.Error(
-                        message = error.message ?: "Unknown error occurred"
-                    ),
+                    contentState = when {
+                        habits.isEmpty() -> HabitListUiState.ContentState.Empty
+                        else -> HabitListUiState.ContentState.Success(
+                            habits = mapToHabitsCardUiModels(
+                                habits = habits,
+                                weekProgress = progress
+                            )
+                        )
+                    },
                     currentWeekStartDate = _currentWeekStartDate.value,
                 )
-            )
+            }
         }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = HabitListUiState(currentWeekStartDate = getWeekStart(LocalDate.now())),
-        )
+            .catch { error ->
+                emit(
+                    HabitListUiState(
+                        contentState = HabitListUiState.ContentState.Error(
+                            message = error.message ?: "Unknown error occurred"
+                        ),
+                        currentWeekStartDate = _currentWeekStartDate.value,
+                    )
+                )
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = HabitListUiState(currentWeekStartDate = getWeekStart(LocalDate.now())),
+            )
 
     init {
 //        viewModelScope.launch {
