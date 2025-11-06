@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -35,7 +36,6 @@ import kz.nkaiyrken.juyem.core.util.DateUtils.getWeekStart
 import kz.nkaiyrken.juyem.features.habits.R
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.time.temporal.WeekFields
 import java.util.Locale
 
 @Composable
@@ -52,6 +52,7 @@ fun WeekNavigationComponent(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
             .background(LightGray100)
             .padding(vertical = 4.dp, horizontal = 4.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -127,13 +128,6 @@ private fun formatWeekRange(startDate: LocalDate, endDate: LocalDate): String {
         val endMonth = endDate.format(monthFormatter)
         "$startDay $startMonth – $endDay $endMonth"
     }
-}
-
-// Extension function to get the start of the week (Monday)
-fun LocalDate.getWeekStart(): LocalDate {
-    val weekFields = WeekFields.of(Locale.getDefault())
-    val dayOfWeek = this.get(weekFields.dayOfWeek())
-    return this.minusDays(dayOfWeek.toLong() - 1)
 }
 
 // ========== Previews ==========

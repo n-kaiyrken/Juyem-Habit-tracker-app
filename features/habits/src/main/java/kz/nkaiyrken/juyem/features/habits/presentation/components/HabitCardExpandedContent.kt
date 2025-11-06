@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material.icons.filled.SkipNext
+import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -100,6 +101,7 @@ fun TimerExpandedContent(
             colors = ButtonDefaults.buttonColors(
                 contentColor = MaterialTheme.additionalColors.elementsAccent,
             ),
+            icon = Icons.Outlined.Timer,
         )
         DefaultExpandedContent(
             onMarkComplete = onMarkComplete,
@@ -156,6 +158,7 @@ fun CounterExpandedContent(
                         hasFocus = false
                     }
                 },
+                shape = MaterialTheme.shapes.small,
             )
 
             // OK button

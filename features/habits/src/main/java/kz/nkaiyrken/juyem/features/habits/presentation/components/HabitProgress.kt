@@ -11,6 +11,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -19,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import kz.nkaiyrken.juyem.core.ui.theme.Gray900
 import kz.nkaiyrken.juyem.core.ui.theme.JuyemTheme
 import kz.nkaiyrken.juyem.core.ui.theme.LightGray200
+import kz.nkaiyrken.juyem.core.ui.theme.additionalColors
 import kz.nkaiyrken.juyem.features.habits.R
 import kz.nkaiyrken.juyem.features.habits.presentation.models.DailyProgressUiModel
 import kz.nkaiyrken.juyem.features.habits.presentation.models.NumericProgress
@@ -26,8 +29,11 @@ import kz.nkaiyrken.juyem.features.habits.presentation.models.NumericProgress
 @Composable
 fun HabitCardProgress(
     progress: NumericProgress,
-    modifier: Modifier = Modifier
-) {
+    modifier: Modifier = Modifier,
+    shape: Shape = RoundedCornerShape(6.dp),
+    backgroundColor: Color = MaterialTheme.additionalColors.backgroundDark,
+    contentColor: Color = MaterialTheme.additionalColors.elementsHighContrast,
+    ) {
 
     val currentText = when (progress) {
         is DailyProgressUiModel.Timer -> formatTime(progress.currentValue)
@@ -47,8 +53,8 @@ fun HabitCardProgress(
     Box(
         modifier = modifier
             .background(
-                color = LightGray200,
-                shape = RoundedCornerShape(6.dp)
+                color = backgroundColor,
+                shape = shape
             )
             .padding(horizontal = 12.dp, vertical = 6.dp)
     ) {
@@ -61,7 +67,7 @@ fun HabitCardProgress(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 ),
-                color = Gray900
+                color = contentColor
             )
             Text(
                 text = stringResource(R.string.forward_slash),
@@ -69,7 +75,7 @@ fun HabitCardProgress(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Normal
                 ),
-                color = Gray900
+                color = contentColor
             )
             Text(
                 text = goalText,
@@ -77,7 +83,7 @@ fun HabitCardProgress(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Normal
                 ),
-                color = Gray900
+                color = contentColor
             )
             if (unit != null) {
                 Text(
@@ -86,7 +92,7 @@ fun HabitCardProgress(
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Normal
                     ),
-                    color = Gray900
+                    color = contentColor
                 )
             }
         }

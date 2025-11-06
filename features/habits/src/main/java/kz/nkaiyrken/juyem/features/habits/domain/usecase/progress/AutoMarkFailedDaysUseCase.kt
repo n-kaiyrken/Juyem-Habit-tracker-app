@@ -32,8 +32,6 @@ import javax.inject.Inject
  * - После полуночи (через WorkManager)
  * - При открытии HabitListScreen
  *
- * Это БИЗНЕС-ПРАВИЛО, поэтому остается в Use Case (не в ViewModel).
- *
  * @param habitRepository для получения списка привычек
  * @param progressRepository для обновления прогресса
  */

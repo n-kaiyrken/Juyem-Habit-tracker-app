@@ -18,6 +18,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kz.nkaiyrken.juyem.core.ui.theme.Blue150
+import kz.nkaiyrken.juyem.core.ui.theme.Blue500
 import kz.nkaiyrken.juyem.core.ui.theme.Gray100
 import kz.nkaiyrken.juyem.core.ui.theme.Gray500
 import kz.nkaiyrken.juyem.core.ui.theme.Gray900
@@ -26,6 +28,7 @@ import kz.nkaiyrken.juyem.core.ui.theme.Green700
 import kz.nkaiyrken.juyem.core.ui.theme.JuyemTheme
 import kz.nkaiyrken.juyem.core.ui.theme.LightGray100
 import kz.nkaiyrken.juyem.core.ui.theme.LightGray200
+import kz.nkaiyrken.juyem.core.ui.theme.LightGray500
 import kz.nkaiyrken.juyem.core.ui.theme.Red300
 import kz.nkaiyrken.juyem.core.ui.theme.Red700
 
@@ -35,15 +38,10 @@ fun DayChip(
     modifier: Modifier = Modifier,
     type: DayChipType = DayChipType.DEFAULT,
     state: DayChipState = DayChipState.DEFAULT,
+    colors: DayChipColors = getDayChipColors(type, state),
     onClick: () -> Unit = {},
 ) {
-    val colors = getDayChipColors(type)
     val shape = RoundedCornerShape(8.dp)
-
-    val alpha = when (state) {
-        DayChipState.DISABLED -> 0.6f
-        else -> 1f
-    }
 
     val borderStroke = if (state == DayChipState.FOCUS) BorderStroke(1.dp, Gray900) else null
 
@@ -58,7 +56,7 @@ fun DayChip(
                     Modifier
                 }
             )
-            .background(colors.background.copy(alpha = alpha))
+            .background(colors.backgroundWithAlpha)
             .clickable(enabled = state != DayChipState.DISABLED, onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
@@ -69,7 +67,7 @@ fun DayChip(
                 fontWeight = FontWeight.Normal,
                 lineHeight = 16.sp
             ),
-            color = colors.content.copy(alpha = alpha)
+            color = colors.contentWithAlpha
         )
     }
 }
@@ -89,38 +87,54 @@ enum class DayChipState {
     HOVER
 }
 
-private data class DayChipColors(
+data class DayChipColors(
     val background: Color,
-    val content: Color
-)
+    val content: Color,
+    val alpha: Float = 1f
+) {
+    val backgroundWithAlpha: Color
+        get() = background.copy(alpha = alpha)
+    
+    val contentWithAlpha: Color
+        get() = content.copy(alpha = alpha)
+}
 
-private fun getDayChipColors(type: DayChipType): DayChipColors {
+private fun getDayChipColors(type: DayChipType, state: DayChipState = DayChipState.DEFAULT): DayChipColors {
+    val alpha = when (state) {
+        DayChipState.DISABLED -> 0.6f
+        else -> 1f
+    }
+    
     return when (type) {
         DayChipType.EMPTY -> DayChipColors(
-            background = Gray100,
-            content = Gray500
+            background = if (state == DayChipState.DISABLED) LightGray100 else Gray100,
+            content = Gray500,
+            alpha = if (state == DayChipState.DISABLED) 1f else alpha
         )
         DayChipType.COMPLETED -> DayChipColors(
             background = Green300,
-            content = Green700
+            content = Green700,
+            alpha = alpha
         )
         DayChipType.SKIPPED -> DayChipColors(
-            background = LightGray100,
-            content = Gray500
+            background = LightGray500,
+            content = Gray500,
+            alpha = alpha
         )
         DayChipType.FAILED -> DayChipColors(
             background = Red300,
-            content = Red700
+            content = Red700,
+            alpha = alpha
         )
         DayChipType.DEFAULT -> DayChipColors(
-            background = LightGray200,
-            content = Gray500
+            background = Blue150,
+            content = Blue500,
+            alpha = alpha
         )
     }
 }
 
 // ========== Previews ==========
-
 @Preview(name = "Empty - Default", showBackground = true)
 @Composable
 private fun DayChipEmptyPreview() {
@@ -281,11 +295,11 @@ private fun DayChipWeekRowPreview() {
             horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(4.dp)
         ) {
             DayChip("ПН", type = DayChipType.COMPLETED)
-            DayChip("ВТ", type = DayChipType.COMPLETED)
             DayChip("СР", type = DayChipType.SKIPPED)
             DayChip("ЧТ", type = DayChipType.FAILED)
             DayChip("ПТ", type = DayChipType.SKIPPED, state = DayChipState.DISABLED)
             DayChip("СБ", type = DayChipType.EMPTY, state = DayChipState.DISABLED)
+            DayChip("ВТ", type = DayChipType.DEFAULT)
             DayChip("ВС", type = DayChipType.EMPTY)
         }
     }

@@ -5,10 +5,6 @@ import java.time.LocalDate
 
 /**
  * Sealed class representing daily progress for different habit types
- *
- * isEnabled flag indicates if the day chip should be clickable:
- * - false: Day before habit creation OR day not in habit's daysOfWeek schedule
- * - true: Valid day that user can interact with
  */
 sealed class DailyProgressUiModel {
     abstract val habitId: Int
@@ -45,7 +41,6 @@ sealed class DailyProgressUiModel {
 
 /**
  * Marker interface for progress types that have numeric values (Counter and Timer)
- * Used to make HabitCardProgress type-safe
  */
 sealed interface NumericProgress {
     val currentValue: Int
