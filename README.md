@@ -1,4 +1,4 @@
-# Juyem - Hsbit tracker app
+# Juyem - Habit tracker app
 
 **Status:** 🚧 In Active Development
 
