@@ -3,13 +3,13 @@
   <h1>Juyem - Habit tracker app</h1>
 </div>
 
-**Status:** In Active Development
-
 A modern Android habit tracking application built with Clean Architecture and Jetpack Compose.
 
 ## About
 
 Juyem is a habit tracking application that helps you build and monitor your habits, track your progress, and achieve your goals. The project is being developed using modern Android development stack and best architecture practices.
+
+**Note:** This project is in early development stage. Features and documentation will be updated as the project evolves.
 
 ## Screenshots
 
@@ -78,7 +78,3 @@ cd Juyem
 ## Contact
 
 Developer: [@nkaiyrken](https://github.com/nkaiyrken)
-
----
-
-**Note:** This project is in early development stage. Features and documentation will be updated as the project evolves.
