@@ -99,6 +99,32 @@ fun HabitCardProgress(
     }
 }
 
+@Composable
+fun HabitCardProgressNotScheduled(
+    modifier: Modifier = Modifier,
+    shape: Shape = RoundedCornerShape(6.dp),
+    backgroundColor: Color = LightGray200,
+    contentColor: Color = Gray900,
+) {
+    Box(
+        modifier = modifier
+            .background(
+                color = backgroundColor,
+                shape = shape
+            )
+            .padding(horizontal = 12.dp, vertical = 6.dp)
+    ) {
+        Text(
+            text = "Не запланировано",
+            style = MaterialTheme.typography.bodyMedium.copy(
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Normal
+            ),
+            color = contentColor
+        )
+    }
+}
+
 /**
  * Formats time in seconds to HH:MM:SS format
  */
@@ -149,6 +175,42 @@ private fun HabitCardProgressPreview() {
                     currentValue = 3610,
                     goalValue = 7200
                 )
+            )
+
+            HabitCardProgress(
+                progress = DailyProgressUiModel.Timer(
+                    habitId = 3,
+                    date = java.time.LocalDate.now(),
+                    status = kz.nkaiyrken.juyem.core.DailyProgressStatus.PARTIAL,
+                    currentValue = 3610,
+                    goalValue = 7200
+                ),
+                backgroundColor = MaterialTheme.additionalColors.elementsHighContrast,
+                contentColor = MaterialTheme.additionalColors.backgroundDark
+            )
+
+            HabitCardProgress(
+                progress = DailyProgressUiModel.Timer(
+                    habitId = 3,
+                    date = java.time.LocalDate.now(),
+                    status = kz.nkaiyrken.juyem.core.DailyProgressStatus.PARTIAL,
+                    currentValue = 3610,
+                    goalValue = 7200
+                ),
+                backgroundColor = MaterialTheme.additionalColors.elementsSuccessLight3,
+                contentColor = MaterialTheme.additionalColors.elementsHighContrast
+            )
+
+            HabitCardProgress(
+                progress = DailyProgressUiModel.Timer(
+                    habitId = 3,
+                    date = java.time.LocalDate.now(),
+                    status = kz.nkaiyrken.juyem.core.DailyProgressStatus.PARTIAL,
+                    currentValue = 3610,
+                    goalValue = 7200
+                ),
+                backgroundColor = MaterialTheme.additionalColors.backgroundDark,
+                contentColor = MaterialTheme.additionalColors.elementsHighContrast
             )
         }
     }

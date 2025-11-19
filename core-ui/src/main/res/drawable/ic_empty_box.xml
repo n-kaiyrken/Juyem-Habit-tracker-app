@@ -1,0 +1,58 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="240dp"
+    android:height="240dp"
+    android:viewportWidth="240"
+    android:viewportHeight="240">
+
+  <!-- Коробка сдвинута на 12px влево -->
+  <path
+      android:pathData="M58,100L58,170L158,170L158,100Z"
+      android:strokeWidth="3"
+      android:fillColor="#ffffff"
+      android:strokeColor="#308DEE"/>
+  <path
+      android:pathData="M58,100L108,70L158,100Z"
+      android:strokeWidth="3"
+      android:fillColor="#ECF5FD"
+      android:strokeColor="#308DEE"/>
+  <path
+      android:pathData="M158,100L158,170L183,155L183,90Z"
+      android:strokeWidth="3"
+      android:fillColor="#ECF5FD"
+      android:strokeColor="#308DEE"/>
+  <path
+      android:pathData="M58,100L108,70"
+      android:strokeWidth="3"
+      android:strokeColor="#308DEE"/>
+  <path
+      android:pathData="M158,100L108,70"
+      android:strokeWidth="3"
+      android:strokeColor="#308DEE"/>
+
+  <!-- Тень под коробкой -->
+  <path
+      android:pathData="M63,102a45,15 0,1 0,90 0a45,15 0,1 0,-90 0z"
+      android:fillColor="#F5F5F5"/>
+
+  <!-- Декоративные круги (не сдвигаем) -->
+  <path
+      android:pathData="M60,60m-4,0a4,4 0,1 1,8 0a4,4 0,1 1,-8 0"
+      android:strokeAlpha="0.3"
+      android:fillColor="#308DEE"
+      android:fillAlpha="0.3"/>
+  <path
+      android:pathData="M180,80m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0"
+      android:strokeAlpha="0.3"
+      android:fillColor="#308DEE"
+      android:fillAlpha="0.3"/>
+  <path
+      android:pathData="M70,180m-5,0a5,5 0,1 1,10 0a5,5 0,1 1,-10 0"
+      android:strokeAlpha="0.3"
+      android:fillColor="#308DEE"
+      android:fillAlpha="0.3"/>
+  <path
+      android:pathData="M170,170m-4,0a4,4 0,1 1,8 0a4,4 0,1 1,-8 0"
+      android:strokeAlpha="0.3"
+      android:fillColor="#308DEE"
+      android:fillAlpha="0.3"/>
+</vector>

@@ -1,6 +1,7 @@
 package kz.nkaiyrken.juyem.features.habits.presentation
 
 import kz.nkaiyrken.juyem.features.habits.presentation.models.HabitCardUiModel
+import java.time.DayOfWeek
 import java.time.LocalDate
 
 /**
@@ -8,7 +9,12 @@ import java.time.LocalDate
  */
 data class HabitListUiState(
     val contentState: ContentState = ContentState.Loading,
-    val currentWeekStartDate: LocalDate = LocalDate.now(),
+    val selectedWeekStartDate: LocalDate = LocalDate.now(),
+    val canNavigateToPreviousWeek: Boolean = false,
+    val canNavigateToNextWeek: Boolean = false,
+    val expandedHabitId: Int? = null,
+    val selectedDay: DayOfWeek = LocalDate.now().dayOfWeek,
+    val topBarTitle: TopBarTitle = TopBarTitle.ActiveHabits,
 ) {
     sealed interface ContentState {
         data object Loading : ContentState

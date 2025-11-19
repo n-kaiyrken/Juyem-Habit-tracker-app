@@ -43,6 +43,7 @@ import kz.nkaiyrken.juyem.features.habits.R
 @Composable
 fun DefaultExpandedContent(
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     onMarkComplete: () -> Unit = {},
     onEditNote: () -> Unit = {},
     onSkip: () -> Unit = {},
@@ -58,10 +59,12 @@ fun DefaultExpandedContent(
         ) {
             CommonHabitCompleteButton(
                 onMarkComplete = onMarkComplete,
+                enabled = enabled,
                 modifier = Modifier.weight(1f)
             )
             CommonHabitClearButton(
                 onCancel = onClear,
+                enabled = enabled,
                 modifier = Modifier.weight(1f)
             )
         }
@@ -71,10 +74,12 @@ fun DefaultExpandedContent(
         ) {
             CommonHabitNoteButton(
                 onEditNote = onEditNote,
+                enabled = enabled,
                 modifier = Modifier.weight(1f)
             )
             CommonHabitSkipButton(
                 onSkip = onSkip,
+                enabled = enabled,
                 modifier = Modifier.weight(1f)
             )
         }
@@ -84,6 +89,7 @@ fun DefaultExpandedContent(
 @Composable
 fun TimerExpandedContent(
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     onStartTimer: () -> Unit = {},
     onEditNote: () -> Unit = {},
     onSkip: () -> Unit = {},
@@ -102,8 +108,10 @@ fun TimerExpandedContent(
                 contentColor = MaterialTheme.additionalColors.elementsAccent,
             ),
             icon = Icons.Outlined.Timer,
+            enabled = enabled
         )
         DefaultExpandedContent(
+            enabled = enabled,
             onMarkComplete = onMarkComplete,
             onEditNote = onEditNote,
             onSkip = onSkip,
@@ -115,6 +123,7 @@ fun TimerExpandedContent(
 @Composable
 fun CounterExpandedContent(
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     onConfirm: (count: Int) -> Unit = {},
     onEditNote: () -> Unit = {},
     onSkip: () -> Unit = {},
@@ -147,6 +156,7 @@ fun CounterExpandedContent(
                     textAlign = TextAlign.Center
                 ),
                 singleLine = true,
+                enabled = enabled,
                 modifier = Modifier.weight(1f).onFocusChanged { focusState ->
                     if (focusState.isFocused && !hasFocus) {
                         // Выделяем весь текст при первом фокусе
@@ -176,7 +186,7 @@ fun CounterExpandedContent(
                     colors = ButtonDefaults.buttonColors(
                         contentColor = MaterialTheme.additionalColors.elementsAccent,
                     ),
-                    enabled = count.text.toIntOrNull() != null
+                    enabled = enabled && count.text.toIntOrNull() != null
                 )
             }
         }
@@ -192,7 +202,8 @@ fun CounterExpandedContent(
                     .weight(1f),
                 text = stringResource(R.string.note),
                 icon = Icons.Default.Edit,
-                onClick = onEditNote
+                onClick = onEditNote,
+                enabled = enabled
             )
             CommonHabitButton(
                 modifier = Modifier
@@ -201,6 +212,7 @@ fun CounterExpandedContent(
                 text = stringResource(R.string.skip),
                 icon = Icons.Default.SkipNext,
                 onClick = onSkip,
+                enabled = enabled
             )
         }
     }
@@ -209,7 +221,8 @@ fun CounterExpandedContent(
 @Composable
 fun CommonHabitClearButton(
     onCancel: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean,
 ) {
     CommonHabitButton(
         modifier = modifier,
@@ -219,13 +232,15 @@ fun CommonHabitClearButton(
             contentColor = MaterialTheme.additionalColors.elementsError,
         ),
         onClick = onCancel,
+        enabled = enabled,
     )
 }
 
 @Composable
 fun CommonHabitCompleteButton(
     onMarkComplete: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     CommonHabitButton(
         modifier = modifier,
@@ -234,33 +249,38 @@ fun CommonHabitCompleteButton(
         colors = ButtonDefaults.buttonColors(
             contentColor = MaterialTheme.additionalColors.elementsSuccess,
         ),
-        onClick = onMarkComplete
+        onClick = onMarkComplete,
+        enabled = enabled
     )
 }
 
 @Composable
 fun CommonHabitNoteButton(
     onEditNote: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     CommonHabitButton(
         modifier = modifier,
         text = stringResource(R.string.note),
         icon = Icons.Default.Edit,
-        onClick = onEditNote
+        onClick = onEditNote,
+        enabled = enabled
     )
 }
 
 @Composable
 fun CommonHabitSkipButton(
     onSkip: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     CommonHabitButton(
         modifier = modifier,
         text = stringResource(R.string.skip),
         icon = Icons.Default.SkipNext,
         onClick = onSkip,
+        enabled = enabled
     )
 }
 

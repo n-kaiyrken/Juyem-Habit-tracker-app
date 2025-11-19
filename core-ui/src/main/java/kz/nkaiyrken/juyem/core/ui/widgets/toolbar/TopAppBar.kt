@@ -4,6 +4,9 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.MenuBook
+import androidx.compose.material.icons.automirrored.filled.MenuOpen
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -18,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kz.nkaiyrken.juyem.core.ui.theme.JuyemTheme
@@ -120,7 +124,7 @@ fun  JuyemTopAppBar(
                 title = {
                     Text(
                         text = title,
-                        style = MaterialTheme.typography.titleLarge,
+                        style = MaterialTheme.typography.headlineMedium,
                         color = contentColor,
                     )
                 },
@@ -191,7 +195,7 @@ private fun TopAppBarFullPreview() {
     JuyemTheme {
         JuyemTopAppBar(
             title = "Сегодня",
-            navigationIcon = Icons.AutoMirrored.Filled.ArrowBack,
+            navigationIcon = Icons.Default.Menu,
             onNavigationClick = {},
             actionText = "Детали",
             onActionTextClick = {},
@@ -220,7 +224,7 @@ private fun TopAppBarNoNavigationPreview() {
 private fun TopAppBarCenterPreview() {
     JuyemTheme {
         JuyemTopAppBar(
-            title = "Мои привычки",
+            title = "Главная",
             titleAlignment = TopAppBarAlignment.Center,
             navigationIcon = Icons.AutoMirrored.Filled.ArrowBack,
             onNavigationClick = {},

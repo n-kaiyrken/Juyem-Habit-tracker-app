@@ -46,7 +46,7 @@ import kz.nkaiyrken.juyem.core.ui.widgets.chip.DayChipState
 import kz.nkaiyrken.juyem.core.ui.widgets.chip.DayChipType
 import kz.nkaiyrken.juyem.core.ui.widgets.chip.getDayLabel
 import kz.nkaiyrken.juyem.features.habits.R
-import kz.nkaiyrken.juyem.features.habits.presentation.models.HabitAction
+import kz.nkaiyrken.juyem.features.habits.presentation.HabitCardAction
 import kz.nkaiyrken.juyem.features.habits.presentation.models.HabitCardUiModel
 import kz.nkaiyrken.juyem.features.habits.presentation.models.DailyProgressUiModel
 import kz.nkaiyrken.juyem.features.habits.presentation.models.NumericProgress
@@ -57,12 +57,15 @@ import java.time.LocalDate
 fun HabitCardItem(
     uiModel: HabitCardUiModel,
     selectedDay: DayOfWeek,
-    selectedDayProgress: DailyProgressUiModel,
     modifier: Modifier = Modifier,
     expanded: Boolean = false,
     onExpandClick: () -> Unit = {},
-    onAction: (HabitAction) -> Unit = {}
+    onAction: (HabitCardAction) -> Unit = {}
 ) {
+    val selectedDayProgress = requireNotNull(uiModel.weekDaysProgress[selectedDay]) {
+        "Selected day $selectedDay not found in weekDaysProgress"
+    }
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -99,7 +102,12 @@ fun HabitCardItem(
 
         if (selectedDayProgress is NumericProgress) {
             Spacer(modifier = Modifier.height(8.dp))
-            HabitCardProgress(progress = selectedDayProgress)
+
+            if (selectedDayProgress.isEnabled) {
+                HabitCardProgress(progress = selectedDayProgress)
+            } else {
+                HabitCardProgressNotScheduled()
+            }
         }
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -126,7 +134,7 @@ fun HabitCardItem(
                     state = state,
                     onClick = {
                         if (isEnabled && progress != null) {
-                            onAction(HabitAction.DayChipClick(progress))
+                            onAction(HabitCardAction.DayChipClick(progress))
                         }
                     }
                 )
@@ -143,27 +151,31 @@ fun HabitCardItem(
                 Spacer(modifier = Modifier.height(16.dp))
                 when (uiModel.habitType) {
                     HabitType.BOOLEAN -> DefaultExpandedContent(
-                        onMarkComplete = { onAction(HabitAction.Complete(selectedDayProgress)) },
-                        onEditNote = { onAction(HabitAction.EditNote(selectedDayProgress)) },
-                        onSkip = { onAction(HabitAction.Skip(selectedDayProgress)) },
-                        onClear = { onAction(HabitAction.Clear(selectedDayProgress)) }
+                        enabled = selectedDayProgress.isEnabled,
+                        onMarkComplete = { onAction(HabitCardAction.Complete(selectedDayProgress)) },
+                        onEditNote = { onAction(HabitCardAction.EditNote(selectedDayProgress)) },
+                        onSkip = { onAction(HabitCardAction.Skip(selectedDayProgress)) },
+                        onClear = { onAction(HabitCardAction.Clear(selectedDayProgress)) }
                     )
                     HabitType.COUNTER -> CounterExpandedContent(
+                        enabled = selectedDayProgress.isEnabled,
                         onConfirm = { count ->
-                            onAction(HabitAction.ConfirmCounter(
+                            onAction(
+                                HabitCardAction.ConfirmCounter(
                                 dailyProgressUiModel = selectedDayProgress,
                                 count = count,
                             ))
                         },
-                        onEditNote = { onAction(HabitAction.EditNote(selectedDayProgress)) },
-                        onSkip = { onAction(HabitAction.Skip(selectedDayProgress)) }
+                        onEditNote = { onAction(HabitCardAction.EditNote(selectedDayProgress)) },
+                        onSkip = { onAction(HabitCardAction.Skip(selectedDayProgress)) }
                     )
                     HabitType.TIMER -> TimerExpandedContent(
-                        onStartTimer = { onAction(HabitAction.StartTimer(selectedDayProgress)) },
-                        onMarkComplete = { onAction(HabitAction.Complete(selectedDayProgress)) },
-                        onEditNote = { onAction(HabitAction.EditNote(selectedDayProgress)) },
-                        onSkip = { onAction(HabitAction.Skip(selectedDayProgress)) },
-                        onClear = { onAction(HabitAction.Clear(selectedDayProgress)) }
+                        enabled = selectedDayProgress.isEnabled,
+                        onStartTimer = { onAction(HabitCardAction.StartTimer(selectedDayProgress)) },
+                        onMarkComplete = { onAction(HabitCardAction.Complete(selectedDayProgress)) },
+                        onEditNote = { onAction(HabitCardAction.EditNote(selectedDayProgress)) },
+                        onSkip = { onAction(HabitCardAction.Skip(selectedDayProgress)) },
+                        onClear = { onAction(HabitCardAction.Clear(selectedDayProgress)) }
                     )
                 }
             }
@@ -171,21 +183,16 @@ fun HabitCardItem(
     }
 }
 
-/**
- * Maps DailyProgress status to DayChipType for week progress visualization
- */
 private fun mapDailyProgressStatusToDayChipType(status: DailyProgressStatus?): DayChipType {
     return when (status) {
         DailyProgressStatus.COMPLETED -> DayChipType.COMPLETED
-        DailyProgressStatus.PARTIAL -> DayChipType.EMPTY // Could be different if needed
+        DailyProgressStatus.PARTIAL -> DayChipType.EMPTY
         DailyProgressStatus.SKIPPED -> DayChipType.SKIPPED
         DailyProgressStatus.FAILED -> DayChipType.FAILED
         DailyProgressStatus.EMPTY -> DayChipType.EMPTY
         null -> DayChipType.EMPTY
     }
 }
-
-// ========== Previews ==========
 
 @Preview(name = "Boolean Habit - Collapsed", showBackground = true)
 @Composable
@@ -249,8 +256,7 @@ private fun BooleanHabitCollapsedPreview() {
                     habitType = HabitType.BOOLEAN,
                     weekDaysProgress = weekDaysProgress
                 ),
-                selectedDay = today.dayOfWeek,
-                selectedDayProgress = weekDaysProgress[today.dayOfWeek]!!
+                selectedDay = today.dayOfWeek
             )
         }
     }
@@ -339,16 +345,7 @@ private fun CounterHabitWithProgressPreview() {
                     habitType = HabitType.COUNTER,
                     weekDaysProgress = weekDaysProgress
                 ),
-                selectedDay = today.dayOfWeek,
-                selectedDayProgress = DailyProgressUiModel.Counter(
-                    habitId = 2,
-                    date = today,
-                    status = DailyProgressStatus.PARTIAL,
-                    currentValue = 5,
-                    goalValue = 10,
-                    unit = "подходов",
-                    isEnabled = true
-                )
+                selectedDay = today.dayOfWeek
             )
         }
     }
@@ -439,7 +436,6 @@ private fun CounterHabitExpandedPreview() {
                     weekDaysProgress = weekDaysProgress
                 ),
                 selectedDay = DayOfWeek.MONDAY,
-                selectedDayProgress = weekDaysProgress[DayOfWeek.MONDAY]!!,
                 expanded = expanded,
                 onExpandClick = { expanded = !expanded }
             )

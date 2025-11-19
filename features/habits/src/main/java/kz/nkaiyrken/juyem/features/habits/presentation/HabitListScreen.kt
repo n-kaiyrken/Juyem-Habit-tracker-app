@@ -1,5 +1,6 @@
 package kz.nkaiyrken.juyem.features.habits.presentation
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,19 +14,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.UploadFile
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -36,11 +33,10 @@ import kz.nkaiyrken.juyem.core.util.DateUtils.getWeekStart
 import kz.nkaiyrken.juyem.features.habits.R
 import kz.nkaiyrken.juyem.features.habits.presentation.components.HabitCardItem
 import kz.nkaiyrken.juyem.features.habits.presentation.components.WeekNavigationComponent
-import kz.nkaiyrken.juyem.features.habits.presentation.models.HabitAction
+import kz.nkaiyrken.juyem.features.habits.presentation.models.HabitCardUiModel
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 
 
 @Composable
@@ -50,21 +46,29 @@ fun HabitListScreen(
     topAppBarState: TopAppBarState,
     onNavigateToDetail: (Int) -> Unit = {},
     onNavigateToCreate: () -> Unit = {},
+    onNavigateToTimerScreen: (Int) -> Unit = {},
+    openDrawer: () -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    var expandedHabitId by remember { mutableStateOf<Int?>(null) }
+    val topBarTitle = when (val title = uiState.topBarTitle) {
+        TopBarTitle.ActiveHabits -> stringResource(R.string.active_habits)
+        TopBarTitle.Today -> stringResource(R.string.today)
+        TopBarTitle.Yesterday -> stringResource(R.string.yesterday)
+        TopBarTitle.Tomorrow -> stringResource(R.string.tomorrow)
+        is TopBarTitle.CustomDate -> {
+            val formatter = DateTimeFormatter.ofPattern("d MMMM")
+            title.date.format(formatter)
+        }
+    }
 
-    var selectedDay by remember { mutableStateOf(LocalDate.now().dayOfWeek) }
-
-    val topBarTitle = getTopBarTitle(selectedDay, expandedHabitId != null)
-
-    LaunchedEffect(topBarTitle) {
+    LaunchedEffect(topBarTitle, uiState.expandedHabitId) {
         topAppBarState.update(
             title = topBarTitle,
-            showNavigationIcon = false, // Main screen - no back button
-            actionText = expandedHabitId?.let { "Детали" },
-            onActionTextClick = { expandedHabitId?.let { onNavigateToDetail(it) } },
+            showNavigationIcon = true,
+            onNavigationClick = openDrawer,
+            actionText = uiState.expandedHabitId?.let { "Детали" },
+            onActionTextClick = { uiState.expandedHabitId?.let { onNavigateToDetail(it) } },
             actionIcon = Icons.Default.Add,
             onActionIconClick = onNavigateToCreate,
         )
@@ -77,13 +81,12 @@ fun HabitListScreen(
             .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         WeekNavigationComponent(
-            currentWeekStartDate = uiState.currentWeekStartDate,
+            currentWeekStartDate = uiState.selectedWeekStartDate,
             onPreviousWeekClick = viewModel::onPreviousWeekClick,
             onNextWeekClick = viewModel::onNextWeekClick,
             canNavigateToPrevious = !(uiState.contentState is HabitListUiState.ContentState.Empty),
-            canNavigateToNext = uiState.currentWeekStartDate.plusWeeks(1) <= getWeekStart(LocalDate.now()),
+            canNavigateToNext = uiState.selectedWeekStartDate.plusWeeks(1) <= getWeekStart(LocalDate.now()),
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -91,65 +94,68 @@ fun HabitListScreen(
         when (val contentState = uiState.contentState) {
             is HabitListUiState.ContentState.Loading -> HabitListLoadingContent()
 
-            is HabitListUiState.ContentState.Error -> HabitListErrorContent(contentState)
+            is HabitListUiState.ContentState.Error -> HabitListErrorContent(contentState.message)
 
             is HabitListUiState.ContentState.Empty -> HabitListEmptyContent()
 
-            is HabitListUiState.ContentState.Success -> {
-
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(
-                        items = contentState.habits,
-                        key = { it.habitId }
-                    ) { habitCardUiModel ->
-                        val isExpanded = expandedHabitId == habitCardUiModel.habitId
-
-                        val dayToShow = if (isExpanded) selectedDay else LocalDate.now().dayOfWeek
-
-                        HabitCardItem(
-                            uiModel = habitCardUiModel,
-                            selectedDay = dayToShow,
-                            selectedDayProgress = habitCardUiModel.weekDaysProgress[dayToShow]!!,
-                            expanded = isExpanded,
-                            onExpandClick = {
-                                if (isExpanded) {
-                                    selectedDay = LocalDate.now().dayOfWeek
-                                    expandedHabitId = null
-                                } else {
-                                    selectedDay = LocalDate.now().dayOfWeek
-                                    expandedHabitId = habitCardUiModel.habitId
-                                }
-                            },
-                            onAction = { action ->
-                                if (action is HabitAction.DayChipClick) {
-                                    if (isExpanded) {
-                                        selectedDay = action.dailyProgressUiModel.date.dayOfWeek
-                                    }
-                                }
-                                viewModel.handleAction(action)
-                            }
-                        )
-                    }
-                }
-            }
+            is HabitListUiState.ContentState.Success -> HabitListSuccessContent(
+                habits = contentState.habits,
+                expandedHabitId = uiState.expandedHabitId,
+                selectedDay = uiState.selectedDay,
+                onExpandClick = viewModel::onExpandClick,
+                onAction = viewModel::handleAction
+            )
         }
     }
 }
 
 @Composable
-fun HabitListEmptyContent() {
+private fun HabitListSuccessContent(
+    habits: List<HabitCardUiModel>,
+    expandedHabitId: Int?,
+    selectedDay: DayOfWeek,
+    onExpandClick: (Int) -> Unit,
+    onAction: (HabitCardAction) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    LazyColumn(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        items(
+            items = habits,
+            key = { it.habitId }
+        ) { habitCardUiModel ->
+            val isExpanded = expandedHabitId == habitCardUiModel.habitId
+            val dayToShow = if (isExpanded) selectedDay else LocalDate.now().dayOfWeek
+
+            HabitCardItem(
+                uiModel = habitCardUiModel,
+                selectedDay = dayToShow,
+                expanded = isExpanded,
+                onExpandClick = { onExpandClick(habitCardUiModel.habitId) },
+                onAction = onAction
+            )
+        }
+    }
+}
+
+@Composable
+private fun HabitListEmptyContent() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Icon(
-                imageVector = Icons.Default.UploadFile,
+            Image(
+                painter = painterResource(id = kz.nkaiyrken.juyem.core.ui.R.drawable.ic_empty_box),
                 contentDescription = stringResource(R.string.add_habit),
-                modifier = Modifier.size(100.dp),
-                tint = MaterialTheme.additionalColors.elementsAccent
+                modifier = Modifier.size(250.dp).align(Alignment.CenterHorizontally),
+            )
+            Text(
+                text = stringResource(R.string.there_are_no_habits),
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.additionalColors.elementsHighContrast,
             )
             Spacer(modifier = Modifier.height(24.dp))
             Text(
@@ -162,13 +168,13 @@ fun HabitListEmptyContent() {
 }
 
 @Composable
-private fun HabitListErrorContent(state: HabitListUiState.ContentState.Error) {
+private fun HabitListErrorContent(errorMessage: String) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = state.message,
+            text = errorMessage,
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.error
         )
@@ -182,26 +188,6 @@ private fun HabitListLoadingContent() {
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator()
-    }
-}
-
-private fun getTopBarTitle(selectedDay: DayOfWeek, isAnyCardExpanded: Boolean): String {
-    if (!isAnyCardExpanded) {
-        return "Активные привычки"
-    }
-
-    val today = LocalDate.now()
-    val selectedDate = today.with(selectedDay)
-
-    val daysDifference = ChronoUnit.DAYS.between(selectedDate, today).toInt()
-
-    return when {
-        daysDifference == 0 -> "Сегодня"
-        daysDifference == 1 -> "Вчера"
-        else -> {
-            val formatter = DateTimeFormatter.ofPattern("d MMMM")
-            selectedDate.format(formatter)
-        }
     }
 }
 

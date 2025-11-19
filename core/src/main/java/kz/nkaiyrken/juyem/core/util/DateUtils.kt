@@ -1,5 +1,7 @@
 package kz.nkaiyrken.juyem.core.util
 
+import kz.nkaiyrken.juyem.core.util.DateUtils.getCurrentWeekDates
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
@@ -26,14 +28,6 @@ object DateUtils {
         return date.withDayOfMonth(date.lengthOfMonth())
     }
 
-    fun isToday(date: LocalDate): Boolean {
-        return date == LocalDate.now()
-    }
-
-    fun isYesterday(date: LocalDate): Boolean {
-        return date == LocalDate.now().minusDays(1)
-    }
-
     fun daysBetween(start: LocalDate, end: LocalDate): Int {
         return ChronoUnit.DAYS.between(start, end).toInt()
     }
@@ -47,21 +41,20 @@ object DateUtils {
         val weekStart = getWeekStart(date)
         return getDateRange(weekStart, weekStart.plusDays(6))
     }
+
+    fun getDateByDayOfWeek(dayOfWeek: DayOfWeek, weekStartDate: LocalDate): LocalDate {
+        return weekStartDate.plusDays((dayOfWeek.value - 1).toLong())
+    }
 }
 
-// Extension functions for better readability in habit tracking logic
-
-/**
- * Checks if this date is in the past (before today)
- */
 fun LocalDate.isPast(): Boolean = this.isBefore(LocalDate.now())
 
-/**
- * Checks if this date is in the future (after today)
- */
 fun LocalDate.isFuture(): Boolean = this.isAfter(LocalDate.now())
 
-/**
- * Checks if this date is today or in the future
- */
-fun LocalDate.isTodayOrFuture(): Boolean = !this.isBefore(LocalDate.now())
+fun LocalDate.isCurrentWeek(): Boolean = getCurrentWeekDates().contains(this)
+
+fun LocalDate.isToday(): Boolean = this == LocalDate.now()
+
+fun LocalDate.isYesterday() = this == LocalDate.now().minusDays(1)
+
+fun LocalDate.isTomorrow() = this == LocalDate.now().plusDays(1)

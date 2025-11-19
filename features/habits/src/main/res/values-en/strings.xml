@@ -17,4 +17,11 @@
     <string name="next_week">Next week</string>
     <string name="add_habit">Add Habit</string>
     <string name="your_habits_will_be_displayed_here">Your habits will be displayed here</string>
+    <string name="there_are_no_habits">There are no habits</string>
+
+    <!-- Top Bar Titles -->
+    <string name="active_habits">Active Habits</string>
+    <string name="today">Today</string>
+    <string name="yesterday">Yesterday</string>
+    <string name="tomorrow">Tomorrow</string>
 </resources>

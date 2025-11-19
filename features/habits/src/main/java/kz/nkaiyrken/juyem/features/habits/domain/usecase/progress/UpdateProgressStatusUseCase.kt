@@ -10,9 +10,6 @@ import javax.inject.Inject
 class UpdateProgressStatusUseCase @Inject constructor(
     private val progressRepository: DailyProgressRepository
 ) {
-    /**
-     * Обновить статус прогресса за день.
-     */
     suspend operator fun invoke(
         habitId: Int,
         date: LocalDate,

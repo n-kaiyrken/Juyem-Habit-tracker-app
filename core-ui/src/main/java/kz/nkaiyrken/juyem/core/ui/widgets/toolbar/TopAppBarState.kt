@@ -2,6 +2,7 @@ package kz.nkaiyrken.juyem.core.ui.widgets.toolbar
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,7 +24,7 @@ class TopAppBarState {
     var showNavigationIcon by mutableStateOf(false)
         private set
 
-    var navigationIcon by mutableStateOf<ImageVector>(Icons.AutoMirrored.Filled.ArrowBack)
+    var navigationIcon by mutableStateOf(Icons.Default.Menu)
         private set
 
     var onNavigationClick by mutableStateOf<(() -> Unit)?>(null)

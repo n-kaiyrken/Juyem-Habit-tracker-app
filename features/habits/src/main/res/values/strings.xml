@@ -17,4 +17,11 @@
     <string name="next_week">Следующая неделя</string>
     <string name="add_habit">Добавить привычку</string>
     <string name="your_habits_will_be_displayed_here">Здесь будут отображаться твои привычки</string>
+    <string name="there_are_no_habits">Нет привычек</string>
+
+    <!-- Top Bar Titles -->
+    <string name="active_habits">Активные привычки</string>
+    <string name="today">Сегодня</string>
+    <string name="yesterday">Вчера</string>
+    <string name="tomorrow">Завтра</string>
 </resources>

@@ -17,19 +17,23 @@ import kz.nkaiyrken.juyem.core.DailyProgress
 import kz.nkaiyrken.juyem.core.DailyProgressStatus
 import kz.nkaiyrken.juyem.core.Habit
 import kz.nkaiyrken.juyem.core.HabitType
+import kz.nkaiyrken.juyem.core.util.DateUtils
 import kz.nkaiyrken.juyem.core.util.DateUtils.getWeekDates
 import kz.nkaiyrken.juyem.core.util.DateUtils.getWeekStart
+import kz.nkaiyrken.juyem.core.util.isCurrentWeek
 import kz.nkaiyrken.juyem.core.util.isFuture
 import kz.nkaiyrken.juyem.core.util.isPast
-import kz.nkaiyrken.juyem.features.habits.domain.usecase.habit.CreateHabitUseCase
+import kz.nkaiyrken.juyem.core.util.isToday
+import kz.nkaiyrken.juyem.core.util.isTomorrow
+import kz.nkaiyrken.juyem.core.util.isYesterday
 import kz.nkaiyrken.juyem.features.habits.domain.usecase.habit.GetHabitsForWeekUseCase
 import kz.nkaiyrken.juyem.features.habits.domain.usecase.progress.GetProgressForWeekUseCase
 import kz.nkaiyrken.juyem.features.habits.domain.usecase.progress.UpsertDailyProgressUseCase
 import kz.nkaiyrken.juyem.features.habits.presentation.models.DailyProgressUiModel
-import kz.nkaiyrken.juyem.features.habits.presentation.models.HabitAction
 import kz.nkaiyrken.juyem.features.habits.presentation.models.HabitCardUiModel
 import kz.nkaiyrken.juyem.features.habits.presentation.models.NumericProgress
 import org.jetbrains.annotations.VisibleForTesting
+import java.time.DayOfWeek
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -38,18 +42,24 @@ class HabitListViewModel @Inject constructor(
     getHabitsForWeekUseCase: GetHabitsForWeekUseCase,
     getProgressForWeekUseCase: GetProgressForWeekUseCase,
     private val upsertDailyProgressUseCase: UpsertDailyProgressUseCase,
-    createHabitUseCase: CreateHabitUseCase,
 ) : ViewModel() {
 
-    private val _currentWeekStartDate = MutableStateFlow(getWeekStart(LocalDate.now()))
+    private val _selectedWeekStartDate = MutableStateFlow(getWeekStart(LocalDate.now()))
+    private val _expandedHabitId = MutableStateFlow<Int?>(null)
+    private val _selectedDay = MutableStateFlow(LocalDate.now().dayOfWeek)
+
+//    private val _uiEvents = Channel<UiEvent>(Channel.BUFFERED)
+//    val uiEvents: Flow<UiEvent> = _uiEvents.receiveAsFlow()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val uiState: StateFlow<HabitListUiState> =
-        _currentWeekStartDate.flatMapLatest { weekStartDate ->
+        _selectedWeekStartDate.flatMapLatest { weekStartDate ->
             combine(
                 getHabitsForWeekUseCase(weekStartDate),
                 getProgressForWeekUseCase(weekStartDate),
-            ) { habits, progress ->
+                _expandedHabitId,
+                _selectedDay,
+            ) { habits, progress, expandedId, selectedDay ->
                 HabitListUiState(
                     contentState = when {
                         habits.isEmpty() -> HabitListUiState.ContentState.Empty
@@ -60,7 +70,12 @@ class HabitListViewModel @Inject constructor(
                             )
                         )
                     },
-                    currentWeekStartDate = _currentWeekStartDate.value,
+                    selectedWeekStartDate = _selectedWeekStartDate.value,
+                    canNavigateToPreviousWeek = habits.isNotEmpty(),
+                    canNavigateToNextWeek = canNavigateToNextWeek(),
+                    expandedHabitId = expandedId,
+                    selectedDay = selectedDay,
+                    topBarTitle = getTopBarTitle(selectedDay, expandedId != null),
                 )
             }
         }
@@ -70,73 +85,203 @@ class HabitListViewModel @Inject constructor(
                         contentState = HabitListUiState.ContentState.Error(
                             message = error.message ?: "Unknown error occurred"
                         ),
-                        currentWeekStartDate = _currentWeekStartDate.value,
+                        selectedWeekStartDate = _selectedWeekStartDate.value,
                     )
                 )
             }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
-                initialValue = HabitListUiState(currentWeekStartDate = getWeekStart(LocalDate.now())),
+                initialValue = HabitListUiState(selectedWeekStartDate = getWeekStart(LocalDate.now())),
             )
 
-    init {
-//        viewModelScope.launch {
-//            createHabitUseCase(
-//                Habit(
-//                    id = 0,
-//                    title = "Drink water",
-//                    orderIndex = 1,
-//                    type = HabitType.BOOLEAN,
-//                )
-//            )
-//            createHabitUseCase(
-//                Habit(
-//                    id = 1,
-//                    title = "Exercise",
-//                    orderIndex = 0,
-//                    type = HabitType.COUNTER,
-//                    goalValue = 30,
-//                    unit = "подходов",
-//                )
-//            )
-//            createHabitUseCase(
-//                Habit(
-//                    id = 2,
-//                    title = "Read a book",
-//                    orderIndex = 2,
-//                    type = HabitType.TIMER,
-//                    goalValue = 360,
-//                    unit = "минут",
-//                )
-//            )
-
-    }
-
-    /**
-     * Handles all habit card actions in a type-safe manner
-     */
-    fun handleAction(action: HabitAction) {
+    fun handleAction(action: HabitCardAction) {
         when (action) {
-            is HabitAction.Complete -> handleMarkComplete(action.dailyProgressUiModel)
-            is HabitAction.ConfirmCounter -> handleConfirmCounter(
+            is HabitCardAction.Complete -> handleMarkComplete(action.dailyProgressUiModel)
+            is HabitCardAction.ConfirmCounter -> handleConfirmCounter(
                 action.dailyProgressUiModel as DailyProgressUiModel.Counter,
                 action.count
             )
-            is HabitAction.StartTimer -> handleStartTimer(action.dailyProgressUiModel.habitId)
-            is HabitAction.EditNote -> handleEditNote(action.dailyProgressUiModel.habitId)
-            is HabitAction.Skip -> handleSkip(action.dailyProgressUiModel)
-            is HabitAction.Clear -> handleClear(action.dailyProgressUiModel)
-            is HabitAction.DayChipClick -> handleDayClick(action.dailyProgressUiModel)
+            is HabitCardAction.StartTimer -> handleStartTimer(action.dailyProgressUiModel.habitId)
+            is HabitCardAction.EditNote -> handleEditNote(action.dailyProgressUiModel.habitId)
+            is HabitCardAction.Skip -> handleSkip(action.dailyProgressUiModel)
+            is HabitCardAction.Clear -> handleClear(action.dailyProgressUiModel)
+            is HabitCardAction.DayChipClick -> handleDayClick(action.dailyProgressUiModel)
         }
     }
 
     fun onPreviousWeekClick() {
-        _currentWeekStartDate.update { it.minusWeeks(1) }
+        _selectedWeekStartDate.update { it.minusWeeks(1) }
     }
 
     fun onNextWeekClick() {
-        _currentWeekStartDate.update { it.plusWeeks(1) }
+        _selectedWeekStartDate.update { it.plusWeeks(1) }
+    }
+
+    fun onExpandClick(habitId: Int) {
+        if (_expandedHabitId.value == habitId) {
+            _expandedHabitId.value = null
+            _selectedDay.value = LocalDate.now().dayOfWeek
+        } else {
+            _expandedHabitId.value = habitId
+
+            val currentState = uiState.value
+            if (currentState.contentState is HabitListUiState.ContentState.Success) {
+                val habit = currentState.contentState.habits.find { it.habitId == habitId }
+                _selectedDay.value = habit?.let { findBestDayToShow(it) }
+                    ?: LocalDate.now().dayOfWeek
+            } else {
+                _selectedDay.value = LocalDate.now().dayOfWeek
+            }
+        }
+    }
+
+    private fun handleMarkComplete(dailyProgressUiModel: DailyProgressUiModel) {
+        viewModelScope.launch {
+            val newValue = when (dailyProgressUiModel) {
+                is NumericProgress -> {
+                    if (dailyProgressUiModel.currentValue < dailyProgressUiModel.goalValue)
+                        dailyProgressUiModel.goalValue
+                    else
+                        dailyProgressUiModel.currentValue
+                }
+                else -> 0
+            }
+            upsertDailyProgressUseCase(
+                mapDailyProgressUiModelToDailyProgress(dailyProgressUiModel)
+                    .copy(
+                        status = DailyProgressStatus.COMPLETED,
+                        value = newValue
+                    )
+            )
+        }
+    }
+
+    private fun handleConfirmCounter(
+        dailyProgressUiModel: DailyProgressUiModel.Counter,
+        count: Int,
+    ) {
+        viewModelScope.launch {
+            val newStatus = when {
+                count >= dailyProgressUiModel.goalValue -> DailyProgressStatus.COMPLETED
+                count < dailyProgressUiModel.goalValue && dailyProgressUiModel.date.isPast() -> DailyProgressStatus.FAILED
+                else -> DailyProgressStatus.EMPTY
+            }
+            upsertDailyProgressUseCase(
+                mapDailyProgressUiModelToDailyProgress(dailyProgressUiModel)
+                    .copy(
+                        status = newStatus,
+                        value = count,
+                    )
+            )
+        }
+    }
+
+    private fun handleStartTimer(habitId: Int) {
+        // TODO: Implement - start timer for timer habit
+    }
+
+    private fun handleEditNote(habitId: Int) {
+        // TODO: Implement - open note editing dialog/screen
+    }
+
+    private fun handleSkip(dailyProgressUiModel: DailyProgressUiModel) {
+        viewModelScope.launch {
+            upsertDailyProgressUseCase(
+                mapDailyProgressUiModelToDailyProgress(dailyProgressUiModel)
+                    .copy(status = DailyProgressStatus.SKIPPED)
+            )
+        }
+    }
+
+    private fun handleClear(dailyProgressUiModel: DailyProgressUiModel) {
+        viewModelScope.launch {
+            val newStatus = when {
+                dailyProgressUiModel.date.isPast() -> DailyProgressStatus.FAILED
+                else -> DailyProgressStatus.EMPTY
+            }
+
+            upsertDailyProgressUseCase(
+                mapDailyProgressUiModelToDailyProgress(dailyProgressUiModel)
+                    .copy(
+                        status = newStatus,
+                        value = 0,
+                    )
+            )
+        }
+    }
+
+    private fun handleDayClick(dailyProgressUiModel: DailyProgressUiModel) {
+        if (_expandedHabitId.value == dailyProgressUiModel.habitId) {
+            _selectedDay.value = dailyProgressUiModel.date.dayOfWeek
+        }
+    }
+
+    private fun canNavigateToNextWeek() = _selectedWeekStartDate.value.let { selectedDate ->
+        val currentWeekStart = getWeekStart(LocalDate.now())
+        val nextWeekStart = currentWeekStart.plusWeeks(1)
+        selectedDate < nextWeekStart
+    }
+
+    private fun getTopBarTitle(selectedDay: DayOfWeek, isAnyCardExpanded: Boolean): TopBarTitle {
+        if (!isAnyCardExpanded) {
+            return TopBarTitle.ActiveHabits
+        }
+
+        val selectedDate = DateUtils.getDateByDayOfWeek(selectedDay, _selectedWeekStartDate.value)
+
+        return when {
+            selectedDate.isToday() -> TopBarTitle.Today
+            selectedDate.isYesterday() -> TopBarTitle.Yesterday
+            selectedDate.isTomorrow() -> TopBarTitle.Tomorrow
+            else -> TopBarTitle.CustomDate(selectedDate)
+        }
+    }
+
+    private fun findBestDayToShow(habit: HabitCardUiModel): DayOfWeek {
+        val today = LocalDate.now().dayOfWeek
+
+        if (habit.weekDaysProgress[today]?.isEnabled == true) {
+            return today
+        }
+
+        val nextEnabledDay = findNextEnabledDay(habit, today)
+        if (nextEnabledDay != null) {
+            return nextEnabledDay
+        }
+
+        val previousEnabledDay = findPreviousEnabledDay(habit, today)
+        if (previousEnabledDay != null) {
+            return previousEnabledDay
+        }
+
+        return today
+    }
+
+    private fun findNextEnabledDay(habit: HabitCardUiModel, from: DayOfWeek): DayOfWeek? {
+        val orderedDays = DayOfWeek.entries
+        val startIndex = orderedDays.indexOf(from)
+
+        for (i in (startIndex + 1) until orderedDays.size) {
+            val day = orderedDays[i]
+            if (habit.weekDaysProgress[day]?.isEnabled == true) {
+                return day
+            }
+        }
+        return null
+    }
+
+    private fun findPreviousEnabledDay(habit: HabitCardUiModel, from: DayOfWeek): DayOfWeek? {
+        val orderedDays = DayOfWeek.entries
+        val startIndex = orderedDays.indexOf(from)
+
+        for (i in (startIndex - 1) downTo 0) {
+            val day = orderedDays[i]
+            if (habit.weekDaysProgress[day]?.isEnabled == true) {
+                return day
+            }
+        }
+        return null
     }
 
     /**
@@ -152,7 +297,7 @@ class HabitListViewModel @Inject constructor(
         habits: List<Habit>,
         weekProgress: Map<Int, Map<LocalDate, DailyProgress>>,
     ): List<HabitCardUiModel> {
-        val weekDates = getWeekDates(_currentWeekStartDate.value)
+        val weekDates = getWeekDates(_selectedWeekStartDate.value)
         val today = LocalDate.now()
 
         return habits.map { habit ->
@@ -272,11 +417,11 @@ class HabitListViewModel @Inject constructor(
         }
     }
 
-    internal fun createEmptyDailyProgressUiModel(
+    private fun createEmptyDailyProgressUiModel(
         habit: Habit,
         date: LocalDate,
         isEnabled: Boolean,
-        reason: String, // For debugging/logging
+        reason: String,
         status: DailyProgressStatus = DailyProgressStatus.EMPTY,
     ): DailyProgressUiModel {
         return when (habit.type) {
@@ -340,85 +485,6 @@ class HabitListViewModel @Inject constructor(
                 isEnabled = isEnabled,
             )
         }
-    }
-
-    private fun handleMarkComplete(dailyProgressUiModel: DailyProgressUiModel) {
-        viewModelScope.launch {
-            val newValue = when (dailyProgressUiModel) {
-                is NumericProgress -> {
-                    if (dailyProgressUiModel.currentValue < dailyProgressUiModel.goalValue)
-                        dailyProgressUiModel.goalValue
-                    else
-                        dailyProgressUiModel.currentValue
-                }
-                else -> 0
-            }
-            upsertDailyProgressUseCase(
-                mapDailyProgressUiModelToDailyProgress(dailyProgressUiModel)
-                    .copy(
-                        status = DailyProgressStatus.COMPLETED,
-                        value = newValue
-                    )
-            )
-        }
-    }
-
-    private fun handleConfirmCounter(
-        dailyProgressUiModel: DailyProgressUiModel.Counter,
-        count: Int,
-    ) {
-        viewModelScope.launch {
-            val newStatus = when {
-                count >= dailyProgressUiModel.goalValue -> DailyProgressStatus.COMPLETED
-                count < dailyProgressUiModel.goalValue && dailyProgressUiModel.date.isPast() -> DailyProgressStatus.FAILED
-                else -> DailyProgressStatus.EMPTY
-            }
-            upsertDailyProgressUseCase(
-                mapDailyProgressUiModelToDailyProgress(dailyProgressUiModel)
-                    .copy(
-                        status = newStatus,
-                        value = count,
-                    )
-            )
-        }
-    }
-
-    private fun handleStartTimer(habitId: Int) {
-        // TODO: Implement - start timer for timer habit
-    }
-
-    private fun handleEditNote(habitId: Int) {
-        // TODO: Implement - open note editing dialog/screen
-    }
-
-    private fun handleSkip(dailyProgressUiModel: DailyProgressUiModel) {
-        viewModelScope.launch {
-            upsertDailyProgressUseCase(
-                mapDailyProgressUiModelToDailyProgress(dailyProgressUiModel)
-                    .copy(status = DailyProgressStatus.SKIPPED)
-            )
-        }
-    }
-
-    private fun handleClear(dailyProgressUiModel: DailyProgressUiModel) {
-        viewModelScope.launch {
-            val newStatus = when {
-                dailyProgressUiModel.date.isPast() -> DailyProgressStatus.FAILED
-                else -> DailyProgressStatus.EMPTY
-            }
-
-            upsertDailyProgressUseCase(
-                mapDailyProgressUiModelToDailyProgress(dailyProgressUiModel)
-                    .copy(
-                        status = newStatus,
-                        value = 0,
-                    )
-            )
-        }
-    }
-
-    private fun handleDayClick(dailyProgressUiModel: DailyProgressUiModel) {
-        // TODO: Implement - handle click on a specific day (view/edit past progress)
     }
 }
 
