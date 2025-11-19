@@ -1,6 +1,9 @@
-# Juyem - Habit tracker app
+<div align="center">
+  <img src="app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp" alt="App Icon" width="120"/>
+  <h1>Juyem - Habit tracker app</h1>
+</div>
 
-**Status:** 🚧 In Active Development
+**Status:** In Active Development
 
 A modern Android habit tracking application built with Clean Architecture and Jetpack Compose.
 
@@ -11,9 +14,9 @@ Juyem is a habit tracking application that helps you build and monitor your habi
 ## Screenshots
 
 <div align="center">
-  <img src="screenshots/111.png" width="250" alt="Habit List"/>
-  <img src="screenshots/112.png" width="250" alt="Habit Tracking"/>
   <img src="screenshots/113.jpg" width="250" alt="Progress View"/>
+  <img src="screenshots/112.png" width="250" alt="Habit Tracking"/>
+  <img src="screenshots/111.png" width="250" alt="Habit List"/>
 </div>
 
 ## Tech Stack
@@ -29,7 +32,7 @@ Juyem is a habit tracking application that helps you build and monitor your habi
 
 ## Current Features
 
-### ✅ Habit Tracking (Implemented)
+### Habit Tracking (Implemented)
 
 - **Habit list view** with weekly navigation
 - **Three habit types:**
@@ -41,12 +44,12 @@ Juyem is a habit tracking application that helps you build and monitor your habi
 
 ## Planned Features
 
-- 🚧 Habit detail screen
-- 📋 Create and edit habit screens
-- 📋 Settings screen
-- 📋 Notes for habits
-- 📋 Extended statistics and analytics
-- 📋 Timer sessions for habits
+- Habit detail screen
+- Create and edit habit screens
+- Settings screen
+- Notes for habits
+- Extended statistics and analytics
+- Timer sessions for habits
 
 ## Requirements
 
