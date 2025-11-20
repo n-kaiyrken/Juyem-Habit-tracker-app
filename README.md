@@ -1,6 +1,7 @@
-# Juyem - Hsbit tracker app
-
-**Status:** 🚧 In Active Development
+<div align="center">
+  <img src="app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp" alt="App Icon" width="120"/>
+  <h1>Juyem - Habit tracker app</h1>
+</div>
 
 A modern Android habit tracking application built with Clean Architecture and Jetpack Compose.
 
@@ -8,12 +9,14 @@ A modern Android habit tracking application built with Clean Architecture and Je
 
 Juyem is a habit tracking application that helps you build and monitor your habits, track your progress, and achieve your goals. The project is being developed using modern Android development stack and best architecture practices.
 
+**Note:** This project is in early development stage. Features and documentation will be updated as the project evolves.
+
 ## Screenshots
 
 <div align="center">
-  <img src="screenshots/111.png" width="250" alt="Habit List"/>
-  <img src="screenshots/112.png" width="250" alt="Habit Tracking"/>
   <img src="screenshots/113.jpg" width="250" alt="Progress View"/>
+  <img src="screenshots/112.png" width="250" alt="Habit Tracking"/>
+  <img src="screenshots/111.png" width="250" alt="Habit List"/>
 </div>
 
 ## Tech Stack
@@ -29,7 +32,7 @@ Juyem is a habit tracking application that helps you build and monitor your habi
 
 ## Current Features
 
-### ✅ Habit Tracking (Implemented)
+### Habit Tracking (Implemented)
 
 - **Habit list view** with weekly navigation
 - **Three habit types:**
@@ -41,12 +44,12 @@ Juyem is a habit tracking application that helps you build and monitor your habi
 
 ## Planned Features
 
-- 🚧 Habit detail screen
-- 📋 Create and edit habit screens
-- 📋 Settings screen
-- 📋 Notes for habits
-- 📋 Extended statistics and analytics
-- 📋 Timer sessions for habits
+- Habit detail screen
+- Create and edit habit screens
+- Settings screen
+- Notes for habits
+- Extended statistics and analytics
+- Timer sessions for habits
 
 ## Requirements
 
@@ -75,7 +78,3 @@ cd Juyem
 ## Contact
 
 Developer: [@nkaiyrken](https://github.com/nkaiyrken)
-
----
-
-**Note:** This project is in early development stage. Features and documentation will be updated as the project evolves.
