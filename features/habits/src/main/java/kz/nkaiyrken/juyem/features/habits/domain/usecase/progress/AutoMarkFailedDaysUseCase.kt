@@ -4,8 +4,8 @@ import kotlinx.coroutines.flow.first
 import kz.nkaiyrken.juyem.core.DailyProgress
 import kz.nkaiyrken.juyem.core.DailyProgressStatus
 import kz.nkaiyrken.juyem.core.Habit
-import kz.nkaiyrken.juyem.core.data.repository.DailyProgressRepository
-import kz.nkaiyrken.juyem.core.data.repository.HabitRepository
+import kz.nkaiyrken.juyem.features.habits.domain.repository.DailyProgressRepository
+import kz.nkaiyrken.juyem.features.habits.domain.repository.HabitRepository
 import kz.nkaiyrken.juyem.core.util.DateUtils
 import java.time.LocalDate
 import javax.inject.Inject

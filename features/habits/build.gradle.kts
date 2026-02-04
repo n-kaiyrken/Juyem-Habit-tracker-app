@@ -2,7 +2,6 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.hilt.gradle)
 }
@@ -40,7 +39,6 @@ dependencies {
 
     //Modules
     implementation(project(":core-ui"))
-    implementation(project(":core-data"))
     implementation(project(":core"))
 
     // Core Android dependencies
@@ -66,12 +64,12 @@ dependencies {
 
     // Hilt Dependency Injection
     implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 
     // Testing
     testImplementation(kotlin("test"))
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
-    kaptTest(libs.hilt.android.compiler)
+    kspTest(libs.hilt.android.compiler)
 
 }

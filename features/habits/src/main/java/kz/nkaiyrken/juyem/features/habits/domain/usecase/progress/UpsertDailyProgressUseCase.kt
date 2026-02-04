@@ -1,7 +1,7 @@
 package kz.nkaiyrken.juyem.features.habits.domain.usecase.progress
 
 import kz.nkaiyrken.juyem.core.DailyProgress
-import kz.nkaiyrken.juyem.core.data.repository.DailyProgressRepository
+import kz.nkaiyrken.juyem.features.habits.domain.repository.DailyProgressRepository
 import javax.inject.Inject
 
 class UpsertDailyProgressUseCase @Inject constructor(

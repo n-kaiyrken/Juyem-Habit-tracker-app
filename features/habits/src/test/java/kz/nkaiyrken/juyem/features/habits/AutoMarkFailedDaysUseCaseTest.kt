@@ -8,8 +8,8 @@ import kz.nkaiyrken.juyem.core.DailyProgressStatus
 import kz.nkaiyrken.juyem.core.Habit
 import kz.nkaiyrken.juyem.core.HabitStatus
 import kz.nkaiyrken.juyem.core.HabitType
-import kz.nkaiyrken.juyem.core.data.repository.DailyProgressRepository
-import kz.nkaiyrken.juyem.core.data.repository.HabitRepository
+import kz.nkaiyrken.juyem.features.habits.domain.repository.DailyProgressRepository
+import kz.nkaiyrken.juyem.features.habits.domain.repository.HabitRepository
 import kz.nkaiyrken.juyem.features.habits.domain.usecase.progress.AutoMarkFailedDaysUseCase
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue

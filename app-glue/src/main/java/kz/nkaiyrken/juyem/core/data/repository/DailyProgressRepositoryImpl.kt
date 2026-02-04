@@ -5,10 +5,11 @@ import kotlinx.coroutines.flow.map
 import kz.nkaiyrken.database.local.dao.DailyProgressDao
 import kz.nkaiyrken.juyem.core.DailyProgress
 import kz.nkaiyrken.juyem.core.data.mapper.DailyProgressMapper
+import kz.nkaiyrken.juyem.features.habits.domain.repository.DailyProgressRepository
 import java.time.LocalDate
 import javax.inject.Inject
 
-class DefaultDailyProgressRepository @Inject constructor(
+class DailyProgressRepositoryImpl @Inject constructor(
     private val dailyProgressDao: DailyProgressDao,
     private val mapper: DailyProgressMapper
 ) : DailyProgressRepository {

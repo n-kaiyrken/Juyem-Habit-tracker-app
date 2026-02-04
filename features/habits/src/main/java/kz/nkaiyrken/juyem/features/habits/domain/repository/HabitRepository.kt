@@ -1,4 +1,4 @@
-package kz.nkaiyrken.juyem.core.data.repository
+package kz.nkaiyrken.juyem.features.habits.domain.repository
 
 import kotlinx.coroutines.flow.Flow
 import kz.nkaiyrken.juyem.core.Habit

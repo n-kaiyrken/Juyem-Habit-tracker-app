@@ -1,12 +1,12 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.ksp)
     alias(libs.plugins.hilt.gradle)
-    alias(libs.plugins.kotlin.kapt)
 }
 
 android {
-    namespace = "kz.nkaiyrken.juyem.core.data"
+    namespace = "kz.nkaiyrken.database"
     compileSdk = 36
 
     defaultConfig {
@@ -14,6 +14,10 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        ksp {
+            arg("room.schemaLocation", "$projectDir/schemas")
+        }
     }
 
     buildTypes {
@@ -35,20 +39,16 @@ android {
 }
 
 dependencies {
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
 
-    //Modules
-    implementation(project(":core-database"))
-    implementation(project(":core"))
-
-    implementation(libs.androidx.core.ktx)
-
-    // Coroutines
-    implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.kotlinx.coroutines.core)
+    //Room
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 
     // Hilt Dependency Injection
     implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
-
-    implementation(libs.androidx.datastore.preferences)
+    ksp(libs.hilt.compiler)
 }

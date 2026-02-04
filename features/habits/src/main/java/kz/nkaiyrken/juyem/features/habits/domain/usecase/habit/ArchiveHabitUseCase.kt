@@ -1,6 +1,6 @@
 package kz.nkaiyrken.juyem.features.habits.domain.usecase.habit
 
-import kz.nkaiyrken.juyem.core.data.repository.HabitRepository
+import kz.nkaiyrken.juyem.features.habits.domain.repository.HabitRepository
 import java.time.LocalDateTime
 import javax.inject.Inject
 
