@@ -24,4 +24,62 @@
     <string name="today">Сегодня</string>
     <string name="yesterday">Вчера</string>
     <string name="tomorrow">Завтра</string>
+
+    <!-- Reorder Screen -->
+    <string name="reorder">Упорядочить</string>
+    <string name="create">Создать</string>
+    <string name="active_journals">Активные журналы</string>
+    <string name="reorder_description">Коснитесь, удерживайте и перемещайте, чтобы изменить порядок элементов.</string>
+    <string name="to_archive">В архив</string>
+
+    <!-- Archive Screen -->
+    <string name="archive">Архив</string>
+    <string name="clear_all">Очистить</string>
+    <string name="archive_description">Здесь хранятся завершённые или скрытые журналы. Ты всегда можешь вернуть их обратно.</string>
+    <string name="activate">Активировать</string>
+    <string name="delete_journal_title">Хочешь удалить журнал?</string>
+    <string name="delete_journal_description">После удаления восстановить журнал будет невозможно.</string>
+    <string name="delete">Удалить</string>
+    <string name="cancel">Отмена</string>
+
+    <!-- Create/Edit Habit Screen -->
+    <string name="new_journal">Новый журнал</string>
+    <string name="save">Сохранить</string>
+    <string name="title_label">Название</string>
+    <string name="title_already_exists">Такое название уже существует</string>
+    <string name="title_required">Название обязательно</string>
+
+    <!-- Completion Condition -->
+    <string name="completion_condition">Условие выполнения</string>
+    <string name="no_condition">Без условий</string>
+    <string name="quantity_condition">Количество</string>
+    <string name="time_condition">Время</string>
+
+    <!-- Goal Fields -->
+    <string name="quantity_per_day">Количество в день</string>
+    <string name="unit_of_measurement">Единица измерения</string>
+    <string name="not_selected">не выбрано</string>
+    <string name="max_value_hint">Максимальное допустимое значение - %d</string>
+    <string name="goal_required">Укажите количество</string>
+
+    <!-- Units -->
+    <string name="unit_meters">м</string>
+    <string name="unit_kilometers">км</string>
+    <string name="unit_minutes">минут</string>
+
+    <!-- Days Section -->
+    <string name="habit_days">Дни привычек</string>
+    <string name="repeat_every_day">Повторять каждый день</string>
+
+    <!-- Day Labels -->
+    <string name="day_mon">пн</string>
+    <string name="day_tue">вт</string>
+    <string name="day_wed">ср</string>
+    <string name="day_thu">чт</string>
+    <string name="day_fri">пт</string>
+    <string name="day_sat">сб</string>
+    <string name="day_sun">вс</string>
+
+    <!-- Reminder Section -->
+    <string name="enable_reminder">Включить напоминание</string>
 </resources>

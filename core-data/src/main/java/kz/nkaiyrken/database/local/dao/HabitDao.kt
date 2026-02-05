@@ -22,13 +22,13 @@ interface HabitDao: BaseDao<HabitEntity> {
     @Query("SELECT * FROM habits WHERE habit_id = :habitId")
     fun getHabitWithDetails(habitId: Int): Flow<HabitWithDetails?>
 
-    @Query("SELECT * FROM habits WHERE status = 'archived'")
+    @Query("SELECT * FROM habits WHERE status = 'ARCHIVED'")
     fun getArchivedHabits(): Flow<List<HabitEntity>>
 
-    @Query("UPDATE habits SET status = 'archived', archived_at = :archivedAt WHERE habit_id = :habitId")
+    @Query("UPDATE habits SET status = 'ARCHIVED', archived_at = :archivedAt WHERE habit_id = :habitId")
     suspend fun archiveHabit(habitId: Int, archivedAt: java.time.LocalDateTime)
 
-    @Query("UPDATE habits SET status = 'active', archived_at = NULL WHERE habit_id = :habitId")
+    @Query("UPDATE habits SET status = 'ACTIVE', archived_at = NULL WHERE habit_id = :habitId")
     suspend fun unarchiveHabit(habitId: Int)
 
     @Query("DELETE FROM habits WHERE habit_id = :habitId")

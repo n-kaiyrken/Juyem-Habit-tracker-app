@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -67,6 +68,7 @@ fun HabitListScreen(
             title = topBarTitle,
             showNavigationIcon = true,
             onNavigationClick = openDrawer,
+            navigationIcon = Icons.Default.Menu,
             actionText = uiState.expandedHabitId?.let { "Детали" },
             onActionTextClick = { uiState.expandedHabitId?.let { onNavigateToDetail(it) } },
             actionIcon = Icons.Default.Add,

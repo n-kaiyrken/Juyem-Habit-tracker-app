@@ -62,13 +62,11 @@ class HabitMapper @Inject constructor() {
 
     private fun HabitStatusEntity.toDomain(): HabitStatus = when (this) {
         HabitStatusEntity.ACTIVE -> HabitStatus.ACTIVE
-        HabitStatusEntity.PAUSED -> HabitStatus.PAUSED
         HabitStatusEntity.ARCHIVED -> HabitStatus.ARCHIVED
     }
 
     private fun HabitStatus.toEntity(): HabitStatusEntity = when (this) {
         HabitStatus.ACTIVE -> HabitStatusEntity.ACTIVE
-        HabitStatus.PAUSED -> HabitStatusEntity.PAUSED
         HabitStatus.ARCHIVED -> HabitStatusEntity.ARCHIVED
     }
 }

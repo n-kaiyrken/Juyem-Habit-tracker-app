@@ -86,19 +86,14 @@ fun CommonInputField(
         focusedTextColor = MaterialTheme.additionalColors.elementsHighContrast,
         unfocusedTextColor = MaterialTheme.additionalColors.elementsHighContrast,
         disabledTextColor = MaterialTheme.additionalColors.elementsLowContrast,
-        focusedContainerColor = when {
-            errorText != null -> MaterialTheme.additionalColors.backgroundErrorLight1
-            else -> MaterialTheme.additionalColors.backgroundLight
-        },
-        unfocusedContainerColor = when {
-            errorText != null -> MaterialTheme.additionalColors.backgroundErrorLight1
-            else -> MaterialTheme.additionalColors.backgroundLight
-        },
+        focusedContainerColor = MaterialTheme.additionalColors.backgroundLight,
+        unfocusedContainerColor = MaterialTheme.additionalColors.backgroundLight,
         disabledContainerColor = MaterialTheme.additionalColors.backgroundLight,
         focusedIndicatorColor = Color.Transparent,
         unfocusedIndicatorColor = Color.Transparent,
         disabledIndicatorColor = Color.Transparent,
         errorIndicatorColor = Color.Transparent,
+        errorContainerColor = MaterialTheme.additionalColors.backgroundErrorLight1,
         cursorColor = MaterialTheme.additionalColors.elementsAccent,
     ),
     keyboardType: KeyboardType = KeyboardType.Text,

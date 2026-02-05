@@ -394,7 +394,7 @@ private fun CounterHabitExpandedPreview() {
                 DayOfWeek.THURSDAY to DailyProgressUiModel.Counter(
                     habitId = 4,
                     date = today.with(DayOfWeek.THURSDAY),
-                    status = DailyProgressStatus.COMPLETED,
+                    status = DailyProgressStatus.EMPTY,
                     currentValue = 8,
                     goalValue = 8,
                     unit = "стаканов",
@@ -416,7 +416,7 @@ private fun CounterHabitExpandedPreview() {
                     currentValue = 3,
                     goalValue = 8,
                     unit = "стаканов",
-                    isEnabled = true
+                    isEnabled = false
                 ),
                 DayOfWeek.SUNDAY to DailyProgressUiModel.Counter(
                     habitId = 4,

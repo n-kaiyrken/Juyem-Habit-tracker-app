@@ -32,8 +32,9 @@ fun Switcher(
     colors: SwitchColors = SwitchDefaults.colors(
         checkedThumbColor = MaterialTheme.additionalColors.elementsAccent,
         checkedTrackColor = MaterialTheme.additionalColors.elementsAccentLight3,
-        uncheckedThumbColor = MaterialTheme.additionalColors.coreWhite,
-        uncheckedTrackColor = MaterialTheme.additionalColors.elementsLowContrast,
+        uncheckedThumbColor = MaterialTheme.additionalColors.elementsAccent,
+        uncheckedTrackColor = MaterialTheme.additionalColors.coreWhite,
+        uncheckedBorderColor = MaterialTheme.additionalColors.elementsAccent
     ),
     enabled: Boolean = true,
     onCheckedChange: ((Boolean) -> Unit)?,

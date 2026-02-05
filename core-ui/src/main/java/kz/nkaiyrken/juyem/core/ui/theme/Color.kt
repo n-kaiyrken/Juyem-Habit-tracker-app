@@ -143,7 +143,7 @@ val additionalDarkColors = AdditionalColors(
     backgroundSuccess = Green600,
     backgroundSuccessLight1 = Green900.copy(alpha = 0.3f),
     backgroundError = Red600,
-    backgroundErrorLight1 = Red900.copy(alpha = 0.3f),
+    backgroundErrorLight1 = Red50,
     elementsWhite = CoreWhite,
     elementsLight = Gray800,
     elementsLowContrast = Gray500,

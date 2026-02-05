@@ -55,6 +55,5 @@ enum class HabitTypeEntity {
 
 enum class HabitStatusEntity {
     ACTIVE,
-    PAUSED,
     ARCHIVED
 }

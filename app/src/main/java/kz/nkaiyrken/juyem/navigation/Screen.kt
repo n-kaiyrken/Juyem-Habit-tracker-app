@@ -10,4 +10,6 @@ sealed class Screen(val route: String) {
         fun createRoute(habitId: Int) = "edit_habit/$habitId"
     }
     object Settings : Screen("settings")
+    object Reorder : Screen("reorder")
+    object Archive : Screen("archive")
 }

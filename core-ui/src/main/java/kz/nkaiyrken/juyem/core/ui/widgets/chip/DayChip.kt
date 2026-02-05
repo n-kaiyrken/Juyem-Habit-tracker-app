@@ -4,12 +4,14 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,8 +58,13 @@ fun DayChip(
                     Modifier
                 }
             )
-            .background(colors.backgroundWithAlpha)
-            .clickable(enabled = state != DayChipState.DISABLED, onClick = onClick),
+            .background(colors.background)
+            .clickable(
+                enabled = state != DayChipState.DISABLED,
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() },
+                onClick = onClick,
+            ),
         contentAlignment = Alignment.Center
     ) {
         Text(
@@ -107,7 +114,7 @@ private fun getDayChipColors(type: DayChipType, state: DayChipState = DayChipSta
     
     return when (type) {
         DayChipType.EMPTY -> DayChipColors(
-            background = if (state == DayChipState.DISABLED) LightGray100 else Gray100,
+            background = if (state == DayChipState.DISABLED) Color.Transparent else Gray100,
             content = Gray500,
             alpha = if (state == DayChipState.DISABLED) 1f else alpha
         )

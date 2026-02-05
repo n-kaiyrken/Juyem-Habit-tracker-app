@@ -56,6 +56,9 @@ dependencies {
     // Tooling
     debugImplementation(libs.androidx.compose.ui.tooling)
 
+    // Reorderable list
+    implementation(libs.reorderable)
+
     // Arch Components
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.runtime.ktx)

@@ -32,6 +32,5 @@ enum class HabitType {
 
 enum class HabitStatus {
     ACTIVE,
-    PAUSED,
     ARCHIVED
 }
