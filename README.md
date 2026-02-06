@@ -11,6 +11,11 @@ Juyem is a habit tracking application that helps you build and monitor your habi
 
 **Note:** This project is in early development stage. Features and documentation will be updated as the project evolves.
 
+[**Project Architecture link (click)** 
+](https://drive.google.com/file/d/1yBwLLJ8yIO2U-3FcwMiYZhp5zsYfYFxn/view?usp=drive_link)
+
+[**Design Library link (click)**](https://docs.google.com/spreadsheets/d/1D_IyERb_VuG5Os9KTH-53KTNj526bBUo/edit?usp=sharing&ouid=109494468932744791198&rtpof=true&sd=true)
+
 ## Screenshots
 
 <div align="center">
